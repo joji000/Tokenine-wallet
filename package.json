@@ -9,17 +9,37 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^6.4.2",
+    "@mui/material": "^6.4.2",
+    "@mui/material-nextjs": "^6.4.2",
+    "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.48.1",
+    "@tanstack/react-query-devtools": "^5.66.0",
+    "@thirdweb-dev/engine": "^0.0.18",
+    "@thirdweb-dev/sdk": "^4.0.99",
+    "@yudiel/react-qr-scanner": "^2.1.0",
+    "axios": "^1.7.9",
+    "ethers": "^5.7.2",
+    "next": "15.1.6",
+    "numeral": "^2.0.6",
+    "qrcode": "^1.5.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.1.6"
+    "thirdweb": "^5.87.2",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@prisma/client": "^6.4.0-dev.15",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
-    "@eslint/eslintrc": "^3"
+    "prisma": "^6.4.0-dev.15",
+    "typescript": "^5"
   }
 }

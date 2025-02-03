@@ -1,95 +1,90 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+import React from 'react';
+import { Typography, Box, Stack } from '@mui/material';
+import CustomLoginButton from '@/components/CustomLoginButton';
+import { createClient } from '@/utils/supabase/client.util';
 
-export default function Home() {
+const Home = () => {
+  const supabase = createClient();
+
+  const handleSignIn = async (provider) => {
+    await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/callback`,
+      },
+    });
+  };
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>src/app/page.tsx</code>.
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <Box sx={{ height: '100vh', width: '100vw', display: 'flex' }}>
+      <Stack direction={{ xs: 'column', md: 'row' }} sx={{ flex: 1 }}>
+        {/* Left Section */}
+        <Box
+          sx={{
+            flex: 1,
+            backgroundImage: 'url(/BG-main.svg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            color: 'white',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            padding: 4,
+            position: 'relative',
+          }}
+        >
+          <Box sx={{ position: 'relative', zIndex: 2, textAlign: 'center' }} mt="5rem">
+            <Typography variant="h3" gutterBottom sx={{ fontSize: { xs: '2rem', md: '3rem' } }}>
+              HELLO
+            </Typography>
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              gutterBottom
+              sx={{ fontSize: { xs: '1.5rem', md: '2.5rem' } }}
+            >
+              WELCOME BACK
+            </Typography>
+          </Box>
+        </Box>
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        {/* Right Section */}
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            flexDirection: 'column',
+            bgcolor: 'white',
+            padding: 4,
+            gap: 2,
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+          <Box
+            component="img"
+            src="/icon/tokenine-logo.svg"
+            alt="TokenNine Logo"
+            sx={{ width: { xs: '40vw', md: '20vw' }, mb: 2 }}
           />
-          Learn
-        </a>
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+          <Typography variant="h5" gutterBottom color="black">
+            Sign in to your Account
+          </Typography>
+          <CustomLoginButton
+            logo="/icon/google-logo.svg"
+            text="Continue with Google"
+            onClick={() => handleSignIn('google')}
           />
-          Examples
-        </a>
-        <a
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
+          <CustomLoginButton
+            logo="/icon/apple-logo.svg"
+            text="Continue with Apple"
+            onClick={() => handleSignIn('apple')}
           />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        </Box>
+      </Stack>
+    </Box>
   );
-}
+};
+
+export default Home;
