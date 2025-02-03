@@ -38,7 +38,7 @@ const AppBarStyled = styled(AppBar, {
     }),
   }),
   backgroundColor: 'white',
-  borderRadius:0,
+  borderRadius: 0, 
 }));
 
 interface CustomAppBarProps {
@@ -71,7 +71,7 @@ const CustomAppBar = ({ open, handleDrawerOpen }: CustomAppBarProps) => {
         >
           <MenuIcon />
         </IconButton>
-        <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#f1f1f1', borderRadius: 1, px: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#f1f1f1', borderRadius: 0, px: 2 }}>
           <SearchIcon sx={{ color: 'gray' }} />
           <InputBase placeholder="Search" sx={{ ml: 1 }} />
         </Box>
@@ -82,13 +82,26 @@ const CustomAppBar = ({ open, handleDrawerOpen }: CustomAppBarProps) => {
           ) : (
             isAuthenticated && user && (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Button onClick={handleMenu} sx={{ textTransform: 'none' }}>
-                  <Avatar sx={{ bgcolor: '#1976d2' }}>{user.email?.charAt(0).toUpperCase()}</Avatar>
-                  <Box sx={{ ml: 1 }}>
-                    <Typography variant="subtitle1">{user.email}</Typography>
+                <Button onClick={handleMenu} sx={{ textTransform: 'none', display: 'flex', alignItems: 'center' }}>
+                  <Avatar sx={{ bgcolor: '#1976d2', width: 32, height: 32 }}>{user.email?.charAt(0).toUpperCase()}</Avatar>
+                  <Box sx={{ ml: 1, textAlign: 'left' }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>{user.email}</Typography>
+                    <Typography variant="caption" sx={{ color: 'gray' }}>User</Typography>
                   </Box>
                 </Button>
-                <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                >
                   <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
                 </Menu>
               </Box>

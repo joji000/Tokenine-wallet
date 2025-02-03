@@ -13,6 +13,21 @@ const notoSansThai = Noto_Sans_Thai({
 const theme = createTheme({
   typography: {
     fontFamily: notoSansThai.style.fontFamily,
+    h1: {
+      fontSize: '2.5rem',
+      fontWeight: 700,
+    },
+    h2: {
+      fontSize: '2rem',
+      fontWeight: 600,
+    },
+    body1: {
+      fontSize: '1rem',
+      fontWeight: 400,
+    },
+    button: {
+      textTransform: 'none',
+    },
   },
   palette: {
     mode: 'light',
@@ -23,115 +38,57 @@ const theme = createTheme({
       main: '#D701A2',
     },
     grey: {
-      300: '#F4F4F4',
-      400: '#ADB7BE',
-      500: '#E0E0E0',
-      600: '#FFFFFF',
+      50: '#F9FAFB',
+      100: '#F3F4F6',
+      200: '#E5E7EB',
+      300: '#D1D5DB',
+      400: '#9CA3AF',
+      500: '#6B7280',
+      600: '#4B5563',
+      700: '#374151',
+      800: '#1F2937',
+      900: '#111827',
     },
     background: {
+      default: '#F9FAFB',
       paper: '#FFFFFF',
-      default: '#F9FAFC',
+    },
+    text: {
+      primary: '#111827',
+      secondary: '#6B7280',
     },
   },
-  shape: {
-    borderRadius: 12,
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: '8px',
+          padding: '8px 16px',
+        },
+        containedPrimary: {
+          backgroundColor: '#6A79FA',
+          '&:hover': {
+            backgroundColor: '#5A69E0',
+          },
+        },
+      },
+    },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#FFFFFF',
+          color: '#111827',
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        paper: {
+          borderRadius: 0,
+        },
+      },
+    },
   },
-  spacing: 8,
 })
-
-theme.components = {
-  MuiCard: {
-    styleOverrides: {
-      root: {
-        borderRadius: 12,
-        padding: 16,
-        background: '#FFF',
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-      },
-    },
-  },
-
-  MuiPaper: {
-    styleOverrides: {
-      root: {
-        backgroundImage: 'none',
-        borderRadius: 12,
-      },
-    },
-  },
-
-  MuiButton: {
-    defaultProps: {
-      disableElevation: true,
-    },
-    styleOverrides: {
-      contained: {
-        background: 'linear-gradient(to right, #D40075, #4340FF)',
-        color: '#FFF',
-        fontWeight: 600,
-        borderRadius: 20,
-        '&:hover': {
-          filter: 'contrast(1.2)',
-        },
-      },
-      outlined: {
-        color: theme.palette.primary.main,
-        border: `2px solid ${theme.palette.primary.main}`,
-        borderRadius: 20,
-      },
-    },
-  },
-
-  MuiTypography: {
-    variants: [
-      {
-        props: {
-          color: 'gradient',
-        },
-        style: {
-          background: 'linear-gradient(180deg, #000000 50%, #999999 110.42%)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent',
-        },
-      },
-      {
-        props: { variant: 'h3' },
-        style: {
-          fontSize: 36,
-          fontWeight: 700,
-        },
-      },
-      {
-        props: { variant: 'h6' },
-        style: {
-          fontSize: 16,
-          fontWeight: 600,
-        },
-      },
-    ],
-  },
-
-  MuiListItemButton: {
-    styleOverrides: {
-      root: {
-        '&.Mui-selected': {
-          borderLeft: `4px solid ${theme.palette.primary.main}`,
-          backgroundColor: theme.palette.grey[300],
-        },
-      },
-    },
-  },
-
-  MuiTextField: {
-    styleOverrides: {
-      root: {
-        borderRadius: 8,
-        '& .MuiInputBase-root': {
-          borderRadius: 8,
-        },
-      },
-    },
-  },
-}
 
 export default theme

@@ -5,10 +5,10 @@ import {
   Drawer,
   Divider,
   List,
-  ListItem,
   ListItemIcon,
   ListItemText,
-  IconButton
+  IconButton,
+  ListItemButton
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -18,6 +18,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import Image from 'next/image';
 import NextLink from 'next/link';
+import { usePathname } from 'next/navigation';
 import CustomAppBar from './CustomAppBar';
 
 const drawerWidth = 240;
@@ -55,6 +56,7 @@ interface TheMainLayoutProps {
 
 const TheMainLayout = ({ children }: TheMainLayoutProps) => {
   const theme = useTheme();
+  const pathname = usePathname();
   const [open, setOpen] = useState(true);
 
   const handleDrawerOpen = () => {
@@ -82,10 +84,51 @@ const TheMainLayout = ({ children }: TheMainLayoutProps) => {
           { text: 'Account', icon: <AccountCircleIcon />, link: '/account' },
           { text: 'Send & Receive', icon: <SwapHorizIcon />, link: '/transfer' },
         ].map((item, index) => (
-          <ListItem key={index} component={NextLink} href={item.link}>
-            <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemButton
+            key={index}
+            component={NextLink}
+            href={item.link}
+            selected={pathname === item.link}
+            sx={{
+              '&:hover': {
+                backgroundColor: theme.palette.action.hover,
+                '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+                  background: 'linear-gradient(45deg, #B01477, #721F90, #2C366C)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                },
+                '& .MuiSvgIcon-root': {
+                  fill: 'url(#gradient1)',
+                },
+              },
+              '&.Mui-selected': {
+                backgroundColor: theme.palette.action.selected,
+                '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+                  background: 'linear-gradient(45deg, #B01477, #721F90, #2C366C)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                },
+                '& .MuiSvgIcon-root': {
+                  fill: 'url(#gradient1)',
+                },
+                '&:hover': {
+                  backgroundColor: theme.palette.action.selected,
+                },
+              },
+            }}
+          >
+            <ListItemIcon>
+              <svg width="0" height="0">
+                <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style={{ stopColor: '#B01477', stopOpacity: 1 }} />
+                  <stop offset="50%" style={{ stopColor: '#721F90', stopOpacity: 1 }} />
+                  <stop offset="100%" style={{ stopColor: '#2C366C', stopOpacity: 1 }} />
+                </linearGradient>
+              </svg>
+              {item.icon}
+            </ListItemIcon>
             <ListItemText primary={item.text} />
-          </ListItem>
+          </ListItemButton>
         ))}
       </List>
     </div>
