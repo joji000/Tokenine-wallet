@@ -67,7 +67,7 @@ const QRScanner: React.FC<{ onScanSuccess: (tokenContract: string | null, addres
           const parsedData = parseEthereumQR(data);
           onScanSuccess(parsedData.tokenContract, parsedData.address, parsedData.value);
           setErrorMessage(null);
-          setOpen(false); // Close scanner on success
+          setOpen(false);
         } catch (error: unknown) {
           setErrorMessage((error as Error).message);
         }

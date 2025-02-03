@@ -14,8 +14,8 @@ import {
 } from '@mui/material';
 import QRCode from 'qrcode';
 import Image from 'next/image';
-import { Token } from '@/interfaces/token.interface'; // Adjust the import path as necessary
-import { fetchTokens } from '@/services/token.services'; // Adjust the import path as necessary
+import { Token } from '@/interfaces/token.interface';
+import { fetchTokens } from '@/services/token.services'; 
 
 interface ReceiveTokenProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,17 +61,17 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
   };
 
   const handleGenerateQrCode = () => {
-    console.log('handleGenerateQrCode called'); // Debugging line
-    console.log('user.walletAddress:', user?.walletAddress); // Debugging line
+    console.log('handleGenerateQrCode called');
+    console.log('user.walletAddress:', user?.walletAddress);
     if (user?.walletAddress) {
       const amountInExponential = (parseFloat(amount) * Math.pow(10, 18));
       const paymentRequest = `ethereum:${user.walletAddress}?value=${amountInExponential}&token=${token}`;
-      console.log('Generating QR code for:', paymentRequest); // Debugging line
+      console.log('Generating QR code for:', paymentRequest);
       QRCode.toDataURL(paymentRequest, { width: 200 }, (error, url) => {
         if (error) {
           console.error(error);
         } else {
-          console.log('QR code generated successfully'); // Debugging line
+          console.log('QR code generated successfully');
           setQrCodeUrl(url);
           setQrCodeGenerated(true);
         }
@@ -82,7 +82,6 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
   return (
     <Box display="flex" flexDirection="column" gap={2}>
       <Card
-        variant="primaryGradient"
         sx={{
           p: 3,
           borderRadius: 3,
@@ -108,10 +107,8 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
             variant="outlined"
             fullWidth
             value={user?.walletAddress || ''}
-            slotProps={{
-              input: {
-                readOnly: true,
-              },
+            InputProps={{
+              readOnly: true,
             }}
           />
           {/* Wallet QR Code */}

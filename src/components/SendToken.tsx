@@ -15,7 +15,7 @@ import {
   Avatar,
   InputAdornment
 } from '@mui/material';
-import QRScanner from '@/components/QrScanner'; // Adjust the import path as necessary
+import QRScanner from '@/components/QrScanner';
 import { fetchTokens } from '@/services/token.services';
 import { transferTokens } from '@/services/transfer.services';
 import { Token } from '@/interfaces/token.interface';
@@ -137,7 +137,7 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
     <>
       <Box display="flex" flexDirection="column" gap={2}>
         <Card
-          variant="primaryGradient"
+          variant="outlined"
           sx={{
             p: 3,
             borderRadius: 3,
@@ -163,10 +163,8 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
               variant="outlined"
               fullWidth
               value={fromAccount}
-              slotProps={{
-                input: {
-                  readOnly: true,
-                },
+              InputProps={{
+                readOnly: true,
               }}
             />
 
@@ -219,10 +217,8 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
                 fullWidth
                 value={amount}
                 onChange={handleAmountChange}
-                slotProps={{
-                  input: {
-                    endAdornment: <InputAdornment position="end">{token}</InputAdornment>,
-                  },
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">{token}</InputAdornment>,
                 }}
               />
               <Button variant="outlined" onClick={handleSetMaxAmount}>
