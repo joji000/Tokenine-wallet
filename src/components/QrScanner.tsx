@@ -80,8 +80,8 @@ const QRScanner: React.FC<{ onScanSuccess: (tokenContract: string | null, addres
       <Button variant="contained" onClick={() => setOpen(true)}>
         <QrCodeScannerIcon />
       </Button>
-      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>Scan Ethereum QR</DialogTitle>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth style={{ textAlign: 'center' }}>
+        <DialogTitle>Scan QR</DialogTitle>
         <DialogContent>
           <Scanner onScan={handleScan} onError={(error) => setErrorMessage(error.message)} />
         </DialogContent>

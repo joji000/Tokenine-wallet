@@ -13,7 +13,8 @@ import {
   DialogTitle,
   Alert,
   Avatar,
-  InputAdornment
+  InputAdornment,
+  Stack
 } from '@mui/material';
 import QRScanner from '@/components/QrScanner';
 import { fetchTokens } from '@/services/token.services';
@@ -135,20 +136,26 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
 
   return (
     <>
-      <Box display="flex" flexDirection="column" gap={2}>
         <Card
-          variant="outlined"
+          variant='outlined'
           sx={{
             p: 3,
-            borderRadius: 3,
             display: 'flex',
             flexDirection: 'column',
             gap: 2,
+            border: 'none'
           }}
         >
-          <Typography variant="h6" gutterBottom>
-            Send Token
-          </Typography>
+          <Stack flexDirection={'row'} justifyContent={'space-between'} alignItems={'center'}>
+            <Typography variant="h6" gutterBottom>
+              Send Token
+            </Typography>
+
+            {/* Token Balance */}
+            <Typography variant="body2">
+                Balance: {tokenBalance} {token}
+              </Typography>
+          </Stack>
           <Box
             component="form"
             sx={{
@@ -202,11 +209,6 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
               ))}
             </TextField>
 
-            {/* Token Balance */}
-            <Typography variant="body2">
-              Balance: {tokenBalance} {token}
-            </Typography>
-
             {/* Amount */}
             <Box display="flex" alignItems="center" gap={2}>
               <TextField
@@ -221,7 +223,7 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
                   endAdornment: <InputAdornment position="end">{token}</InputAdornment>,
                 }}
               />
-              <Button variant="outlined" onClick={handleSetMaxAmount}>
+              <Button variant="outlined" color="secondary" onClick={handleSetMaxAmount}>
                 Max
               </Button>
             </Box>
@@ -248,7 +250,6 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
             </Box>
           </Box>
         </Card>
-      </Box>
 
       {/* Confirmation Dialog */}
       <Dialog open={dialogOpen} onClose={handleDialogClose}>

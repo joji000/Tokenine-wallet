@@ -10,7 +10,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
-  Avatar
+  Avatar,
+  Stack
 } from '@mui/material';
 import QRCode from 'qrcode';
 import Image from 'next/image';
@@ -82,12 +83,13 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
   return (
     <Box display="flex" flexDirection="column" gap={2}>
       <Card
+        variant='outlined'
         sx={{
           p: 3,
-          borderRadius: 3,
           display: 'flex',
           flexDirection: 'column',
           gap: 2,
+          border: 'none'
         }}
       >
         <Typography variant="h6" gutterBottom>
@@ -129,8 +131,8 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
       </Card>
 
       {/* QR Code Dialog */}
-      <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Payment Request</DialogTitle>
+      <Dialog open={dialogOpen} onClose={handleDialogClose} maxWidth="xs" fullWidth sx={{textAlign: "center"}}>
+        <DialogTitle >Payment Request</DialogTitle>
         <DialogContent>
           {!qrCodeGenerated ? (
             <Box display="flex" flexDirection="column" gap={2}>
@@ -164,21 +166,24 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
                   </MenuItem>
                 ))}
               </TextField>
-              <Button onClick={handleGenerateQrCode} color="primary">
-                Continue
-              </Button>
+              <Stack direction="row" spacing={2} justifyContent={'space-between'} >
+                <Button onClick={handleDialogClose} variant="outlined" color="secondary" fullWidth>
+                  Cancel
+                </Button>
+                <Button onClick={handleGenerateQrCode} variant="contained" color="primary" fullWidth>
+                  Continue
+                </Button>
+              </Stack>
             </Box>
           ) : (
-            <Box display="flex" justifyContent="center" mt={2}>
+            <Box display="flex" justifyContent="center" flexDirection={'column'} gap={2} alignItems={'center'}>
               {qrCodeUrl && <Image src={qrCodeUrl} alt="Payment QR Code" width={200} height={200}/>}
+              <Button onClick={handleDialogClose} variant="outlined" color="secondary" fullWidth>
+                  Cancel
+              </Button>
             </Box>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDialogClose} color="secondary">
-            Close
-          </Button>
-        </DialogActions>
       </Dialog>
     </Box>
   );

@@ -86,8 +86,8 @@ const DashboardPage: React.FC = () => {
                   <Table sx={{ borderCollapse: 'collapse' }}>
                     <TableHead>
                       <TableRow>
-                        <TableCell sx={{ borderBottom: 2 }}><strong>Logo</strong></TableCell>
-                        <TableCell sx={{ borderBottom: 2 }}><strong>Symbol</strong></TableCell>
+                        <TableCell sx={{ borderBottom: 2 }}></TableCell>
+                        <TableCell sx={{ borderBottom: 2 }}><strong>Name</strong></TableCell>
                         <TableCell sx={{ borderBottom: 2 }}><strong>Address</strong></TableCell>
                         <TableCell sx={{ borderBottom: 2 }}><strong>Balance</strong></TableCell>
                       </TableRow>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import {
   Tabs,
   Tab,
+  Box
 } from '@mui/material';
 
 import useGetMe from '@/hooks/user/useGetMe';
@@ -20,12 +21,14 @@ const TransferPage: React.FC = () => {
 
   return (
     <TheMainLayout>
-      <Tabs value={tabIndex} onChange={handleTabChange} aria-label="send and receive tabs">
-        <Tab label="Send" />
-        <Tab label="Receive" />
-      </Tabs>
-      {tabIndex === 0 && <SendToken user={user} />}
-      {tabIndex === 1 && <ReceiveToken user={user} />}
+      <Box maxWidth={425} mx="auto" mt={4} sx={{ p: 1, border: '1px solid #ccc', borderRadius: 2 ,backgroundColor: '#fff'}}>
+        <Tabs value={tabIndex} onChange={handleTabChange} centered variant="fullWidth">
+          <Tab label="Send" />
+          <Tab label="Receive" />
+        </Tabs>
+        {tabIndex === 0 && <SendToken user={user} />}
+        {tabIndex === 1 && <ReceiveToken user={user} />}
+      </Box>
     </TheMainLayout>
   );
 };

@@ -60,16 +60,22 @@ const theme = createTheme({
   },
   components: {
     MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
       styleOverrides: {
-        root: {
-          borderRadius: '8px',
-          padding: '8px 16px',
-        },
-        containedPrimary: {
-          backgroundColor: '#6A79FA',
+        contained: {
+          background: 'linear-gradient(to right,#D40075, #4340FF)',
+  
           '&:hover': {
-            backgroundColor: '#5A69E0',
+            filter: 'contrast(1.5)',
           },
+          borderRadius: 20
+        },
+        outlined: {
+          color: 'linear-gradient(to right,#D40075, #4340FF)',
+          border: '2px solid linear-gradient(to right,#D40075, #4340FF)',
+          borderRadius: 20
         },
       },
     },
