@@ -14,8 +14,8 @@ import {
 } from '@mui/material';
 import QRCode from 'qrcode';
 import Image from 'next/image';
-import { Token } from '@/interfaces/token.interface';
-import { fetchTokens } from '@/services/token.services'; 
+import { Token } from '@/interfaces/token.interface'; // Adjust the import path as necessary
+import { fetchTokens } from '@/services/token.services'; // Adjust the import path as necessary
 
 interface ReceiveTokenProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -64,8 +64,8 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
     console.log('handleGenerateQrCode called');
     console.log('user.walletAddress:', user?.walletAddress);
     if (user?.walletAddress) {
-      const amountInExponential = (parseFloat(amount) * Math.pow(10, 18));
-      const paymentRequest = `ethereum:${user.walletAddress}?value=${amountInExponential}&token=${token}`;
+      const amountInExponential = (parseFloat(amount) * Math.pow(10, 18)).toString();
+      const paymentRequest = `ethereum:${token}@7117/transfer?address=${user.walletAddress}&uint256=${amountInExponential}`;
       console.log('Generating QR code for:', paymentRequest);
       QRCode.toDataURL(paymentRequest, { width: 200 }, (error, url) => {
         if (error) {
