@@ -34,27 +34,29 @@ const AddressForm: React.FC = () => {
           value={addressLine2}
           onChange={(e) => setAddressLine2(e.target.value)}
         />
-        <TextField
-          label="อำเภอ/เขต"
-          variant="outlined"
-          fullWidth
-          value={district}
-          onChange={(e) => setDistrict(e.target.value)}
-        />
-        <TextField
-          label="จังหวัด"
-          variant="outlined"
-          fullWidth
-          value={province}
-          onChange={(e) => setProvince(e.target.value)}
-        />
-        <TextField
-          label="รหัสไปรษณีย์"
-          variant="outlined"
-          fullWidth
-          value={postalCode}
-          onChange={(e) => setPostalCode(e.target.value)}
-        />
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <TextField
+            label="อำเภอ/เขต"
+            variant="outlined"
+            fullWidth
+            value={district}
+            onChange={(e) => setDistrict(e.target.value)}
+          />
+          <TextField
+            label="จังหวัด"
+            variant="outlined"
+            fullWidth
+            value={province}
+            onChange={(e) => setProvince(e.target.value)}
+          />
+          <TextField
+            label="รหัสไปรษณีย์"
+            variant="outlined"
+            fullWidth
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
+          />
+        </Box>
         <Button type="submit" variant="contained" color="primary">
           Edit Address
         </Button>
