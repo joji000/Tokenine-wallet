@@ -10,10 +10,15 @@ import {
   DialogTitle,
   DialogContent,
   Avatar,
-  Stack
+  Stack,
+  Snackbar,
+  Alert,
+  InputAdornment,
+  IconButton
 } from '@mui/material';
 import QRCode from 'qrcode';
 import Image from 'next/image';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { Token } from '@/interfaces/token.interface'; // Adjust the import path as necessary
 import { fetchTokens } from '@/services/token.services'; // Adjust the import path as necessary
 
@@ -30,6 +35,9 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [qrCodeGenerated, setQrCodeGenerated] = useState(false);
   const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertType, setAlertType] = useState<'success' | 'error' | 'info'>('info');
 
   const fetchTokensCallback = useCallback(async () => {
     if (!user?.walletAddress) return;
@@ -60,23 +68,53 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
     setQrCodeUrl(null);
   };
 
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseFloat(e.target.value);
+    if (value >= 0) {
+      setAmount(e.target.value);
+    } else {
+      setAmount('');
+    }
+  };
+
   const handleGenerateQrCode = () => {
-    console.log('handleGenerateQrCode called');
-    console.log('user.walletAddress:', user?.walletAddress);
+    if (!token) {
+      setAlertType('error');
+      setAlertMessage('Please select a token.');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    if (!amount || parseFloat(amount) <= 0) {
+      setAlertType('error');
+      setAlertMessage('Please input a valid amount.');
+      setSnackbarOpen(true);
+      return;
+    }
+
     if (user?.walletAddress) {
       const amountInExponential = (parseFloat(amount) * Math.pow(10, 18)).toString();
       const paymentRequest = `ethereum:${token}@7117/transfer?address=${user.walletAddress}&uint256=${amountInExponential}`;
-      console.log('Generating QR code for:', paymentRequest);
       QRCode.toDataURL(paymentRequest, { width: 200 }, (error, url) => {
         if (error) {
           console.error(error);
         } else {
-          console.log('QR code generated successfully');
           setQrCodeUrl(url);
           setQrCodeGenerated(true);
         }
       });
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setAlertType('success');
+    setAlertMessage('Address copied to clipboard!');
+    setSnackbarOpen(true);
   };
 
   return (
@@ -110,6 +148,13 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
             value={user?.walletAddress || ''}
             InputProps={{
               readOnly: true,
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={() => copyToClipboard(user?.walletAddress || '')}>
+                    <ContentCopyIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
             }}
           />
           {/* Wallet QR Code */}
@@ -143,7 +188,7 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
                 variant="outlined"
                 fullWidth
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={handleAmountChange}
               />
               {/* Token Selector */}
               <TextField
@@ -184,6 +229,17 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Snackbar Alert */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={alertType} sx={{ width: '100%' }}>
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
