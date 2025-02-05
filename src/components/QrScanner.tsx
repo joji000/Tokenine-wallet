@@ -10,10 +10,8 @@ import {
   DialogTitle,
   Alert,
 } from '@mui/material';
-import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner';
 import { Scanner } from '@yudiel/react-qr-scanner';
 import { IDetectedBarcode } from '@yudiel/react-qr-scanner';
-
 
 const parseEthereumQR = (qrCode: string) => {
   try {
@@ -54,9 +52,13 @@ const parseEthereumQR = (qrCode: string) => {
   }
 };
 
+interface QRScannerProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  onScanSuccess: (tokenContract: string | null, address: string, value: string) => void;
+}
 
-const QRScanner: React.FC<{ onScanSuccess: (tokenContract: string | null, address: string, value: string) => void }> = ({ onScanSuccess }) => {
-  const [open, setOpen] = useState(false);
+const QRScanner: React.FC<QRScannerProps> = ({ open, setOpen, onScanSuccess }) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleScan = (detectedCodes: IDetectedBarcode[]) => {
@@ -76,10 +78,7 @@ const QRScanner: React.FC<{ onScanSuccess: (tokenContract: string | null, addres
   };
 
   return (
-    <Box>
-      <Button variant="contained" onClick={() => setOpen(true)}>
-        <QrCodeScannerIcon />
-      </Button>
+    <Box display='none'>
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth style={{ textAlign: 'center' }}>
         <DialogTitle>Scan QR</DialogTitle>
         <DialogContent>
@@ -98,4 +97,3 @@ const QRScanner: React.FC<{ onScanSuccess: (tokenContract: string | null, addres
 };
 
 export default QRScanner;
-

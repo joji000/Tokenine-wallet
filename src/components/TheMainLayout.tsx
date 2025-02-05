@@ -8,7 +8,8 @@ import {
   ListItemIcon,
   ListItemText,
   IconButton,
-  ListItemButton
+  ListItemButton,
+  useMediaQuery
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -20,6 +21,7 @@ import Image from 'next/image';
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import CustomAppBar from './CustomAppBar';
+import UserMenu from './UserMenu';
 
 const drawerWidth = 240;
 
@@ -56,8 +58,9 @@ interface TheMainLayoutProps {
 
 const TheMainLayout = ({ children }: TheMainLayoutProps) => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const pathname = usePathname();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(!isMobile);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -153,6 +156,9 @@ const TheMainLayout = ({ children }: TheMainLayoutProps) => {
         open={open}
       >
         {drawer}
+        {isMobile && (
+            <UserMenu />
+        )}
       </Drawer>
       <Main open={open}>
         <DrawerHeader />

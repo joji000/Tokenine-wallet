@@ -13,8 +13,8 @@ import {
   Paper, 
   Avatar, 
   Card,
-  Link,
-  CircularProgress
+  CircularProgress,
+  Stack
 } from '@mui/material';
 
 import TheMainLayout from '@/components/TheMainLayout';
@@ -23,6 +23,7 @@ import useGetBalance from '@/hooks/user/useGetBalance';
 
 import { fetchTokens } from '@/services/token.services';
 import { Token } from '@/interfaces/token.interface';
+import CardInfo from '@/components/CardInfo';
 
 const DashboardPage: React.FC = () => {
   const { data: user, isLoading: isUserLoading } = useGetMe();
@@ -54,26 +55,12 @@ const DashboardPage: React.FC = () => {
           <CircularProgress />
         ) : (
           <>
-            <Card variant="outlined" sx={{ mb: 3, p: 2 }}>
-              <Typography variant="h6">
-                Wallet Information
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography>
-                <strong>Wallet Address: </strong>
-                <Link
-                  href={`${process.env.NEXT_PUBLIC_EXP_BLOCKSCOUNT_URL}/address/${user?.walletAddress}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {user?.walletAddress}
-                </Link>
-              </Typography>
-              <Typography>
-                <strong>Balance: </strong> {balance?.displayValue} XL3
-              </Typography>
-            </Card>
-
+            <Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+              <CardInfo title='Balance' amount={`${balance?.displayValue} XL3`} walletAddress={user?.walletAddress} icon='/icon/balance-icon.svg' />
+              <CardInfo title='Send' amount='200' icon='/icon/send-icon.svg' />
+              <CardInfo title='Receive' amount='100' icon='/icon/receive-icon.svg' />
+              <CardInfo title='Total' amount='300' icon='/icon/transac-icon.svg' />
+            </Stack>
             <Card variant="outlined" sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
                 Token Balances

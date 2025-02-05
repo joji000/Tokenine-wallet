@@ -1,22 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   AppBar,
   Toolbar,
   InputBase,
-  Avatar,
-  Typography,
-  Button,
-  Menu,
-  MenuItem,
   IconButton,
-  Box
+  Box,
+  useMediaQuery
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/material/styles';
-import { createClient } from '@/utils/supabase/client.util';
-import useAuth from '@/hooks/auth/useAuth';
-import { useRouter } from 'next/navigation';
+import UserMenu from './UserMenu';
 
 const drawerWidth = 240;
 
@@ -47,17 +41,7 @@ interface CustomAppBarProps {
 }
 
 const CustomAppBar = ({ open, handleDrawerOpen }: CustomAppBarProps) => {
-  const { user, isLoading, isAuthenticated } = useAuth();
-  const supabase = createClient();
-  const router = useRouter();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
-  const handleClose = () => setAnchorEl(null);
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    router.push('/');
-  };
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   return (
     <AppBarStyled position="fixed" open={open}>
@@ -71,42 +55,13 @@ const CustomAppBar = ({ open, handleDrawerOpen }: CustomAppBarProps) => {
         >
           <MenuIcon />
         </IconButton>
-        <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#f1f1f1', borderRadius: 0, px: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#f1f1f1', borderRadius: 1, px: 2 }}>
           <SearchIcon sx={{ color: 'gray' }} />
           <InputBase placeholder="Search" sx={{ ml: 1 }} />
         </Box>
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {isLoading ? (
-            <Avatar />
-          ) : (
-            isAuthenticated && user && (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Button onClick={handleMenu} sx={{ textTransform: 'none', display: 'flex', alignItems: 'center' }}>
-                  <Avatar sx={{ bgcolor: '#1976d2', width: 32, height: 32 }}>{user.email?.charAt(0).toUpperCase()}</Avatar>
-                  <Box sx={{ ml: 1, textAlign: 'left' }}>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>{user.email}</Typography>
-                    <Typography variant="caption" sx={{ color: 'gray' }}>User</Typography>
-                  </Box>
-                </Button>
-                <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                  anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                >
-                  <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
-                </Menu>
-              </Box>
-            )
-          )}
+          {!isMobile && <UserMenu />}
         </Box>
       </Toolbar>
     </AppBarStyled>

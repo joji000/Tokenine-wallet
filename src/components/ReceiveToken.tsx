@@ -9,7 +9,6 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   Avatar,
   Stack
 } from '@mui/material';

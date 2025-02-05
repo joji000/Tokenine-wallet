@@ -14,7 +14,8 @@ import {
   Alert,
   Avatar,
   InputAdornment,
-  Stack
+  Stack,
+  IconButton
 } from '@mui/material';
 import QRScanner from '@/components/QrScanner';
 import { fetchTokens } from '@/services/token.services';
@@ -36,6 +37,7 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertType, setAlertType] = useState<'success' | 'error' | null>(null);
+  const [showScanner, setShowScanner] = useState(false);
 
   const handleQrScanSuccess = (scannedTokenContract: string | null, scannedAddress: string, scannedValue: string) => {
     setToAccount(scannedAddress);
@@ -48,6 +50,7 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
         setTokenBalance(matchedToken.value);
       }
     }
+    setShowScanner(false);
   };
 
   const fetchTokensCallback = useCallback(async () => {
@@ -174,20 +177,28 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
                 readOnly: true,
               }}
             />
+            
 
             {/* To Account */}
-            <Box display="flex" alignItems="center" gap={2}>
-              <TextField
-                label="Recipient Address"
-                placeholder="Recipient address"
-                variant="outlined"
-                fullWidth
-                value={toAccount}
-                onChange={(e) => setToAccount(e.target.value)}
+            <TextField
+              label="Recipient Address"
+              placeholder="Recipient address"
+              variant="outlined"
+              fullWidth
+              value={toAccount}
+              onChange={(e) => setToAccount(e.target.value)}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setShowScanner(!showScanner)}>
+                      <Avatar src='/icon/scanqricon.svg' variant="square"/>
+                    </IconButton>
+                  </InputAdornment>
+                  ),
+                }}
               />
-              <QRScanner onScanSuccess={handleQrScanSuccess}/>
-            </Box>
-
+            <QRScanner open={showScanner} setOpen={setShowScanner} onScanSuccess={handleQrScanSuccess} />
+            
             {/* Token Selector */}
             <TextField
               select
@@ -220,12 +231,16 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
                 value={amount}
                 onChange={handleAmountChange}
                 InputProps={{
-                  endAdornment: <InputAdornment position="end">{token}</InputAdornment>,
-                }}
+                  endAdornment: (
+                  <InputAdornment position="end">
+                    {token}
+                  <Button variant="outlined" color="secondary" onClick={handleSetMaxAmount} sx={{ ml: 1 }}>
+                    Max
+                  </Button>
+                </InputAdornment>
+                ),
+              }}
               />
-              <Button variant="outlined" color="secondary" onClick={handleSetMaxAmount}>
-                Max
-              </Button>
             </Box>
 
             {/* Buttons */}
