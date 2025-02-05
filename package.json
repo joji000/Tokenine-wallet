@@ -37,6 +37,7 @@
     "@prisma/client": "^6.4.0-dev.15",
     "@tanstack/react-query": "^5.66.0",
     "@types/node": "^20",
+    "@types/numeral": "^2.0.5",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
