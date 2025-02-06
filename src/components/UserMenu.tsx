@@ -1,18 +1,34 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Button, Avatar, Typography, Menu, MenuItem } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { createClient } from '@/utils/supabase/client.util';
 import useAuth from '@/hooks/auth/useAuth';
 import { useRouter } from 'next/navigation';
+import useGetMe from '@/hooks/user/useGetMe';
 
 const UserMenu = () => {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
   const supabase = createClient();
   const router = useRouter();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
   const handleClose = () => setAnchorEl(null);
+
+  const { data: user, isLoading } = useGetMe();
+  const [displayName, setDisplayName] = useState('User');
+
+  useEffect(() => {
+    if (user) {
+      const { firstName, lastName, email } = user;
+      if (firstName && lastName) {
+        setDisplayName(`${firstName} ${lastName}`);
+      } else if (email) {
+        setDisplayName(email.split('@')[0]);
+      }
+    }
+  }, [user]);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.push('/');
@@ -29,7 +45,9 @@ const UserMenu = () => {
           {user.email?.charAt(0).toUpperCase()}
         </Avatar>
         <Box sx={{ ml: 1, textAlign: 'left' }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>User</Typography>
+          <Typography variant="subtitle2" sx={{ fontWeight: 'bold' }}>
+            {displayName}
+          </Typography>
           <Typography variant="caption" sx={{ color: 'gray' }}>{user.email}</Typography>
         </Box>
         <KeyboardArrowDownIcon />
