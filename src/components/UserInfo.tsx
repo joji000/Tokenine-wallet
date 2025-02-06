@@ -11,7 +11,9 @@ import {
   FormControl,
   InputLabel,
   Select,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Snackbar,
+  Alert
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -31,6 +33,9 @@ const UserInfoForm: React.FC = () => {
   const [idNumber, setIdNumber] = useState('');
   const [idVisible, setIdVisible] = useState(false);
   const [isValidId, setIsValidId] = useState(true);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
   useEffect(() => {
     if (user) {
@@ -73,17 +78,29 @@ const UserInfoForm: React.FC = () => {
         dob: dob ? dob.format('DD/MM/YYYY') : undefined,
         idNumber: idNumber || undefined,
       });
-      // Update the state with the updated user data
+      
       setPrefix(updatedUser.prefix || '');
       setFirstName(updatedUser.firstName || '');
       setLastName(updatedUser.lastName || '');
       setDob(updatedUser.dob ? dayjs(updatedUser.dob, 'DD/MM/YYYY') : null);
       setIdNumber(updatedUser.idNumber || '');
-      // Optionally refetch user data
+  
       refetch();
+     
+      setSnackbarMessage('User updated successfully');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
     } catch (error) {
       console.error('Failed to update user:', error);
+     
+      setSnackbarMessage('Failed to update user');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
     }
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
   };
 
   if (isLoading) {
@@ -158,6 +175,15 @@ const UserInfoForm: React.FC = () => {
           Edit Info
         </Button>
       </Box>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Card>
   );
 };
