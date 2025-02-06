@@ -12,7 +12,7 @@ const ProtectedLayout = async ({ children }: PropsWithChildren) => {
   } = await supabase.auth.getUser()
 
   if (!user || !!error) {
-    return redirect(Route.SIGN_IN)
+    return redirect(Route.HOME)
   }
 
   return children

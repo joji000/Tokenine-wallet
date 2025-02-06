@@ -1,13 +1,36 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Typography, Box, Stack } from '@mui/material';
+import { useRouter } from 'next/navigation';
 import CustomLoginButton from '@/components/CustomLoginButton';
 import { createClient } from '@/utils/supabase/client.util';
+import { Route } from '@/enums/route.enum';
 
 const Home = () => {
   const supabase = createClient();
+  const router = useRouter();
 
-  const handleSignIn = async (provider) => {
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        router.push(Route.DASHBOARD);
+      }
+    };
+
+    checkUser();
+  }, [supabase, router]);
+
+  interface SignInOptions {
+    redirectTo: string;
+  }
+
+  interface SignInProvider {
+    provider: 'google' | 'apple';
+    options: SignInOptions;
+  }
+
+  const handleSignIn = async (provider: SignInProvider['provider']) => {
     await supabase.auth.signInWithOAuth({
       provider,
       options: {

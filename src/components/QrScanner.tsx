@@ -28,7 +28,7 @@ const parseEthereumQR = (qrCode: string) => {
       throw new Error('Invalid Ethereum QR format');
     }
 
-    const tokenOrRecipient = match[1] || null;
+    const tokenOrRecipient = match[1];
     const chainId = match[2] || 'N/A';
     const recipientAddress = match[3] || tokenOrRecipient; // If no transfer, use main address
     const value = match[4] || match[5] || '0';
@@ -55,7 +55,7 @@ const parseEthereumQR = (qrCode: string) => {
 interface QRScannerProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  onScanSuccess: (tokenContract: string | null, address: string, value: string) => void;
+  onScanSuccess: (tokenContract: string, address: string, value: string) => void;
 }
 
 const QRScanner: React.FC<QRScannerProps> = ({ open, setOpen, onScanSuccess }) => {
@@ -67,7 +67,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ open, setOpen, onScanSuccess }) =
       if (data) {
         try {
           const parsedData = parseEthereumQR(data);
-          onScanSuccess(parsedData.tokenContract, parsedData.address, parsedData.value);
+          onScanSuccess(parsedData.tokenContract ?? '', parsedData.address, parsedData.value.toString());
           setErrorMessage(null);
           setOpen(false);
         } catch (error: unknown) {
@@ -82,7 +82,7 @@ const QRScanner: React.FC<QRScannerProps> = ({ open, setOpen, onScanSuccess }) =
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="xs" fullWidth style={{ textAlign: 'center' }}>
         <DialogTitle>Scan QR</DialogTitle>
         <DialogContent>
-          <Scanner onScan={handleScan} onError={(error) => setErrorMessage(error.message)} />
+          <Scanner onScan={handleScan} onError={(error) => setErrorMessage((error as Error).message)} />
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpen(false)} color="secondary">
