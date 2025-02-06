@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -16,17 +16,31 @@ import {
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import useGetMe from '@/hooks/user/useGetMe';
+import { updateUser } from '@/services/updateUser.services';
 
 const UserInfoForm: React.FC = () => {
+  const { data: user, isLoading, refetch } = useGetMe();
   const [prefix, setPrefix] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [dob, setDob] = useState<Dayjs | null>(null);
   const [idNumber, setIdNumber] = useState('');
   const [idVisible, setIdVisible] = useState(false);
+  const [isValidId, setIsValidId] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      setPrefix(user.prefix || '');
+      setFirstName(user.firstName || '');
+      setLastName(user.lastName || '');
+      setDob(user.dob ? dayjs(user.dob, 'DD/MM/YYYY') : null);
+      setIdNumber(user.idNumber || '');
+    }
+  }, [user]);
 
   const handlePrefixChange = (event: SelectChangeEvent) => {
     setPrefix(event.target.value);
@@ -36,11 +50,45 @@ const UserInfoForm: React.FC = () => {
     setIdVisible(!idVisible);
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    // Handle form submission logic here
-    console.log({ prefix, firstName, lastName, dob, idNumber });
+  const handleIdNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setIdNumber(value);
+    setIsValidId(/^\d{13}$/.test(value));
   };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!user) {
+      console.error('User data is missing');
+      return;
+    }
+
+    console.log('User data:', user);
+
+    try {
+      const updatedUser = await updateUser({
+        prefix: prefix || undefined,
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
+        dob: dob ? dob.format('DD/MM/YYYY') : undefined,
+        idNumber: idNumber || undefined,
+      });
+      // Update the state with the updated user data
+      setPrefix(updatedUser.prefix || '');
+      setFirstName(updatedUser.firstName || '');
+      setLastName(updatedUser.lastName || '');
+      setDob(updatedUser.dob ? dayjs(updatedUser.dob, 'DD/MM/YYYY') : null);
+      setIdNumber(updatedUser.idNumber || '');
+      // Optionally refetch user data
+      refetch();
+    } catch (error) {
+      console.error('Failed to update user:', error);
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Card sx={{ p: 3 }}>
@@ -81,7 +129,7 @@ const UserInfoForm: React.FC = () => {
             label="วัน/เดือน/ปี เกิด"
             value={dob}
             onChange={(newValue) => setDob(newValue)}
-            
+            format="DD/MM/YYYY"
           />
         </LocalizationProvider>
         <TextField
@@ -90,7 +138,9 @@ const UserInfoForm: React.FC = () => {
           fullWidth
           type={idVisible ? 'text' : 'password'}
           value={idNumber}
-          onChange={(e) => setIdNumber(e.target.value)}
+          onChange={handleIdNumberChange}
+          error={!isValidId}
+          helperText={!isValidId ? 'กรุณากรอกเลขบัตรประชาชน 13 หลัก' : ''}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

@@ -30,4 +30,3 @@ export const getBalance = async () => {
     throw error
   }
 }
-

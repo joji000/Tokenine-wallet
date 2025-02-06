@@ -27,6 +27,7 @@ export const createUserIfNotExists = async ({
         providerId,
         email,
         role: Role.USER,
+        createdAt: new Date(),
       },
     })
     const walletAddress = (await engine.backendWallet.create({ type: 'local' }))
@@ -87,3 +88,32 @@ export const getUserById = async (userId: number) => {
   return user
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const updateUserConfigByUserId = async (userId: number, config: any) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        prefix: config.prefix || user.prefix,
+        firstName: config.firstName || user.firstName,
+        lastName: config.lastName || user.lastName,
+        dob: config.dob || user.dob,
+        idNumber: config.idNumber || user.idNumber,
+        updatedAt: new Date(),
+      },
+    });
+
+    return updatedUser;
+  } catch (error) {
+    console.error('Failed to update user:', error);
+    throw new Error('Failed to update user');
+  }
+};
