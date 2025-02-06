@@ -11,7 +11,7 @@ const AccountPage = () => {
     <TheMainLayout>
       <Stack sx={{ p: 3 }} flexDirection={{ xs: 'column', md: 'row' }} gap={3}>      
           <UserInfoForm />
-          <AddressForm />
+          <AddressForm /> 
       </Stack>
     </TheMainLayout>
   );

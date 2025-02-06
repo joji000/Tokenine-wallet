@@ -21,7 +21,7 @@ const AddressForm: React.FC = () => {
     const initializeThailand = () => {
       if (typeof window !== 'undefined' && window.jQuery) {
         window.jQuery.Thailand({
-          $amphoe: $('[name="district"'),
+          $amphoe: $('[name="district"]'),
           $province: $('[name="province"]'),
           $zipcode: $('[name="postalCode"]'),
         });
@@ -56,7 +56,7 @@ const AddressForm: React.FC = () => {
       <Script src="https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/typeahead.bundle.js" strategy="beforeInteractive" />
       <Script src="https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dist/jquery.Thailand.min.js" strategy="beforeInteractive" />
 
-      <Card sx={{ p: 3 }}>
+      <Card sx={{ p: 3 , overflow:'visible'}}>
         <Typography variant="h6" gutterBottom>
           Edit Address Information
         </Typography>
