@@ -11,7 +11,7 @@ interface UpdateUserParams {
 
 export const updateUser = async (params: UpdateUserParams) => {
   try {
-    const { data } = await axiosClient.put('/user', {
+    const { data } = await axiosClient.put('/user/userInfo', {
       prefix: params.prefix,
       firstName: params.firstName,
       lastName: params.lastName,

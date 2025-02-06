@@ -21,6 +21,22 @@ model User {
   lastName      String?
   dob           String?
   idNumber      String?  @unique
+  addresses     Address[]
+}
+
+model Address {
+  id            Int      @id @default(autoincrement())
+  addressLine1  String
+  addressLine2  String?
+  district      String
+  province      String
+  postalCode    String
+  userId        Int     
+  user          User     @relation(fields: [userId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId])
 }
 
 enum Role {

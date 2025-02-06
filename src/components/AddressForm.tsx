@@ -1,7 +1,9 @@
 /* eslint-disable @next/next/no-before-interactive-script-outside-document */
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Card, Typography } from '@mui/material';
+import { Box, TextField, Button, Card, Typography, Snackbar, Alert } from '@mui/material';
 import Script from 'next/script';
+import { updateAddress } from '@/services/updateAddress.services';
+import useGetMe from '@/hooks/user/useGetMe';
 
 declare global {
   interface Window {
@@ -11,17 +13,25 @@ declare global {
 }
 
 const AddressForm: React.FC = () => {
+  const { data: user, isLoading } = useGetMe();
+  const userId = user?.id;
+
   const [addressLine1, setAddressLine1] = useState('');
   const [addressLine2, setAddressLine2] = useState('');
   const [district, setDistrict] = useState('');
   const [province, setProvince] = useState('');
   const [postalCode, setPostalCode] = useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
   useEffect(() => {
     const initializeThailand = () => {
       if (typeof window !== 'undefined' && window.jQuery) {
         window.jQuery.Thailand({
-          $amphoe: $('[name="district"]'),
+          database: '/jquery.Thailand.js/database/db.json',
+          $district: $('[name="district"]'),
+          $amphoe: $('[name="province"]'),
           $province: $('[name="province"]'),
           $zipcode: $('[name="postalCode"]'),
         });
@@ -43,20 +53,47 @@ const AddressForm: React.FC = () => {
     initializeThailand();
   }, []);
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    // Handle form submission logic here
-    console.log({ addressLine1, addressLine2, district, province, postalCode });
+    if (!userId) {
+      console.error('User ID is not available');
+      return;
+    }
+    const formData = { userId, addressLine1, addressLine2, district, province, postalCode };
+    try {
+      const response = await updateAddress(formData);
+      console.log('Data saved:', response);
+      setSnackbarMessage('Address updated successfully');
+      setSnackbarSeverity('success');
+      setSnackbarOpen(true);
+    } catch (error) {
+      console.error('Error saving data:', error);
+      setSnackbarMessage('Failed to update address');
+      setSnackbarSeverity('error');
+      setSnackbarOpen(true);
+    }
   };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  function initializeThailand(): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <>
       <Script src="https://code.jquery.com/jquery-3.2.1.min.js" strategy="beforeInteractive" />
-      <Script src="https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/JQL.min.js" strategy="beforeInteractive" />
-      <Script src="https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dependencies/typeahead.bundle.js" strategy="beforeInteractive" />
-      <Script src="https://earthchie.github.io/jquery.Thailand.js/jquery.Thailand.js/dist/jquery.Thailand.min.js" strategy="beforeInteractive" />
+      <Script src="/jquery.Thailand.js/dependencies/JQL.min.js" strategy="beforeInteractive" />
+      <Script src="/jquery.Thailand.js/dependencies/typeahead.bundle.js" strategy="beforeInteractive" />
+      <Script src="/jquery.Thailand.js/dist/jquery.Thailand.min.js" strategy="beforeInteractive" onLoad={() => initializeThailand()} />
 
-      <Card sx={{ p: 3 , overflow:'visible'}}>
+      <Card sx={{ p: 3, overflow: 'visible' }}>
         <Typography variant="h6" gutterBottom>
           Edit Address Information
         </Typography>
@@ -106,6 +143,15 @@ const AddressForm: React.FC = () => {
           </Button>
         </Box>
       </Card>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

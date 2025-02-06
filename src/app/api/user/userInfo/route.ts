@@ -3,10 +3,7 @@ import { NextResponse } from 'next/server';
 
 import { updateUserConfigDto } from '@/dtos/UserConfig.dto';
 import { withAuth } from '@/server/middlewares/auth.middleware';
-import {
-  getUserById,
-  updateUserConfigByUserId,
-} from '@/server/services/user.service';
+import { getUserById, updateUserConfigByUserId } from '@/server/services/user.service';
 import { handleError } from '@/server/utils/handle-error.util';
 
 export const GET = withAuth(async (req: NextRequest) => {
