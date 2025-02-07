@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Card, Typography, Snackbar, Alert } from "@mui/material";
 import Script from "next/script";
 import { updateAddress } from '@/services/updateAddress.services';
+import { fetchAddress } from '@/services/getAddress.services';
 import useGetMe from '@/hooks/user/useGetMe';
 
 const AddressForm: React.FC = () => {
@@ -51,6 +52,25 @@ const AddressForm: React.FC = () => {
 
     checkAndInitialize();
   }, []);
+
+  useEffect(() => {
+    const loadAddress = async () => {
+      if (user) {
+        try {
+          const address = await fetchAddress(user.id);
+          setAddressLine1(address.addressLine1 || '');
+          setAddressLine2(address.addressLine2 || '');
+          setDistrict(address.district || '');
+          setProvince(address.province || '');
+          setPostalCode(address.postalCode || '');
+        } catch (error) {
+          console.error('Failed to load address:', error);
+        }
+      }
+    };
+
+    loadAddress();
+  }, [user]);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();

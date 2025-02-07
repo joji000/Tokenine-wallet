@@ -156,7 +156,7 @@ export const updateUserAddressByUserId = async (userId: number, addressData: any
 
 export const getUserAddressByUserId = async (userId: number) => {
   try {
-    const address = await prisma.address.findUnique({
+    const address = await prisma.address.findFirst({
       where: { userId },
     });
 
