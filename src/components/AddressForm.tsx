@@ -23,7 +23,7 @@ const AddressForm: React.FC = () => {
 
         $.Thailand({
           database: "/jquery.Thailand.js/database/db.json",
-          $district: $('[name="district"]'),
+          $amphoe: $('[name="district"]'),
           $province: $('[name="province"]'),
           $zipcode: $('[name="postalCode"]'),
         });
