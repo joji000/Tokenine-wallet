@@ -5,7 +5,6 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          <link rel="stylesheet" href="/jquery.Thailand.js/dist/jquery.Thailand.min.css" />
         </Head>
         <body>
           <Main />

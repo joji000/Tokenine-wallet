@@ -1,73 +1,88 @@
-/* eslint-disable @next/next/no-before-interactive-script-outside-document */
-import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Card, Typography, Snackbar, Alert } from '@mui/material';
-import Script from 'next/script';
+import React, { useState, useEffect } from "react";
+import { Box, TextField, Button, Card, Typography, Snackbar, Alert } from "@mui/material";
+import Script from "next/script";
 import { updateAddress } from '@/services/updateAddress.services';
 import useGetMe from '@/hooks/user/useGetMe';
 
-declare global {
-  interface Window {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    jQuery: any;
-  }
-}
-
 const AddressForm: React.FC = () => {
-  const { data: user, isLoading } = useGetMe();
-  const userId = user?.id;
-
-  const [addressLine1, setAddressLine1] = useState('');
-  const [addressLine2, setAddressLine2] = useState('');
-  const [district, setDistrict] = useState('');
-  const [province, setProvince] = useState('');
-  const [postalCode, setPostalCode] = useState('');
+  const { data: user, isLoading, refetch } = useGetMe();
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
+  const [district, setDistrict] = useState("");
+  const [province, setProvince] = useState("");
+  const [postalCode, setPostalCode] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
   useEffect(() => {
     const initializeThailand = () => {
-      if (typeof window !== 'undefined' && window.jQuery) {
-        window.jQuery.Thailand({
-          database: '/jquery.Thailand.js/database/db.json',
+      if (typeof window !== "undefined" && window.jQuery) {
+        const $ = window.jQuery;
+
+        $.Thailand({
+          database: "/jquery.Thailand.js/database/db.json",
           $district: $('[name="district"]'),
-          $amphoe: $('[name="province"]'),
           $province: $('[name="province"]'),
           $zipcode: $('[name="postalCode"]'),
         });
 
-        $('[name="district"]').on('change', function() {
+        $('[name="district"]').on("change", function (this: HTMLElement) {
           setDistrict($(this).val() as string);
         });
 
-        $('[name="province"]').on('change', function() {
+        $('[name="province"]').on("change", function (this: HTMLElement) {
           setProvince($(this).val() as string);
         });
 
-        $('[name="postalCode"]').on('change', function() {
+        $('[name="postalCode"]').on("change", function (this: HTMLElement) {
           setPostalCode($(this).val() as string);
         });
       }
     };
 
-    initializeThailand();
+    const checkAndInitialize = () => {
+      if (window.jQuery && window.jQuery.Thailand) {
+        initializeThailand();
+      } else {
+        setTimeout(checkAndInitialize, 500);
+      }
+    };
+
+    checkAndInitialize();
   }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!userId) {
-      console.error('User ID is not available');
+    if (!user) {
+      console.error('User data is missing');
       return;
     }
-    const formData = { userId, addressLine1, addressLine2, district, province, postalCode };
+
     try {
-      const response = await updateAddress(formData);
-      console.log('Data saved:', response);
+      const updatedAddress = await updateAddress({
+        userId: user.id,
+        addressLine1,
+        addressLine2,
+        district,
+        province,
+        postalCode,
+      });
+
+      setAddressLine1(updatedAddress.addressLine1 || '');
+      setAddressLine2(updatedAddress.addressLine2 || '');
+      setDistrict(updatedAddress.district || '');
+      setProvince(updatedAddress.province || '');
+      setPostalCode(updatedAddress.postalCode || '');
+
+      refetch();
+
       setSnackbarMessage('Address updated successfully');
       setSnackbarSeverity('success');
       setSnackbarOpen(true);
     } catch (error) {
-      console.error('Error saving data:', error);
+      console.error('Failed to update address:', error);
+
       setSnackbarMessage('Failed to update address');
       setSnackbarSeverity('error');
       setSnackbarOpen(true);
@@ -82,22 +97,19 @@ const AddressForm: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  function initializeThailand(): void {
-    throw new Error('Function not implemented.');
-  }
-
   return (
     <>
-      <Script src="https://code.jquery.com/jquery-3.2.1.min.js" strategy="beforeInteractive" />
-      <Script src="/jquery.Thailand.js/dependencies/JQL.min.js" strategy="beforeInteractive" />
-      <Script src="/jquery.Thailand.js/dependencies/typeahead.bundle.js" strategy="beforeInteractive" />
-      <Script src="/jquery.Thailand.js/dist/jquery.Thailand.min.js" strategy="beforeInteractive" onLoad={() => initializeThailand()} />
+      {/* Load scripts lazily to avoid blocking */}
+      <Script src="https://code.jquery.com/jquery-3.2.1.min.js" strategy="lazyOnload" />
+      <Script src="/jquery.Thailand.js/dependencies/JQL.min.js" strategy="lazyOnload" />
+      <Script src="/jquery.Thailand.js/dependencies/typeahead.bundle.js" strategy="lazyOnload" />
+      <Script src="/jquery.Thailand.js/dist/jquery.Thailand.min.js" strategy="lazyOnload" />
 
-      <Card sx={{ p: 3, overflow: 'visible' }}>
+      <Card sx={{ p: 3, overflow: "visible" }}>
         <Typography variant="h6" gutterBottom>
           Edit Address Information
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <TextField
             label="ที่อยู่ บรรทัดที่1"
             variant="outlined"
@@ -112,7 +124,7 @@ const AddressForm: React.FC = () => {
             value={addressLine2}
             onChange={(e) => setAddressLine2(e.target.value)}
           />
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             <TextField
               label="อำเภอ/เขต"
               variant="outlined"
