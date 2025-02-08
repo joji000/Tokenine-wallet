@@ -1,0 +1,14 @@
+# docker-compose.yml (No Nginx for this test)
+version: "3.9"
+services:
+  nextjs-app:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app:cached # macOS: cached, Linux: consistent or cached, Windows: delegated
+    environment:
+      - NODE_ENV=production # or development
+    env_file:
+      - .env # If you are using .env
+    restart: always
