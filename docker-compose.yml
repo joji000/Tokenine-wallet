@@ -1,0 +1,19 @@
+services:
+  nextjs-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production # or development
+    env_file:
+      - .env # If you are using .env
+    restart: always
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80" # Map host port 80 to container port 80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro # Mount nginx config
+    depends_on:
+      - nextjs-app
