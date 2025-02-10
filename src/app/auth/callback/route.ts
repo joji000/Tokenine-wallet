@@ -1,23 +1,19 @@
 import { NextResponse } from 'next/server'
-
 import { createUserIfNotExists } from '@/server/services/user.service'
 import { createClient } from '@/utils/supabase/server.util'
 
 export async function GET(request: Request) {
-  // The `/auth/callback` route is required for the server-side auth flow implemented
-  // by the SSR package. It exchanges an auth code for the user's session.
-  // https://supabase.com/docs/guides/auth/server-side/nextjs
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
-  const origin = requestUrl.origin
+
+  // Ensure origin is set correctly
+  const origin = process.env.NEXT_PUBLIC_BASE_URL || requestUrl.origin
   const redirectTo = requestUrl.searchParams.get('redirect_to')?.toString()
 
   if (code) {
     const supabase = await createClient()
     await supabase.auth.exchangeCodeForSession(code)
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
 
     if (user) {
       createUserIfNotExists({
@@ -27,10 +23,6 @@ export async function GET(request: Request) {
     }
   }
 
-  if (redirectTo) {
-    return NextResponse.redirect(`${origin}${redirectTo}`)
-  }
-
-  // URL to redirect to after sign up process completes
-  return NextResponse.redirect(`${origin}/dashboard`)
+  // Redirect user to the correct location
+  return NextResponse.redirect(redirectTo ? `${origin}${redirectTo}` : `${origin}/dashboard`)
 }
