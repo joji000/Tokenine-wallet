@@ -86,10 +86,27 @@ const DashboardPage: React.FC = () => {
         ) : (
           <>
             <Stack direction={{ xs: 'column', md: 'row' }} spacing={1} mb={2}>
-              <CardInfo title='Balance' amount={`${balance?.displayValue} XL3`} walletAddress={user?.walletAddress} icon='/icon/balance-icon.svg' setSnackbarOpen={setSnackbarOpen} />
-              <CardInfo title='Send' amount={`${sendCount} transactions`} icon='/icon/send-icon.svg' setSnackbarOpen={setSnackbarOpen} />
-              <CardInfo title='Receive' amount={`${receiveCount} transactions`} icon='/icon/receive-icon.svg' setSnackbarOpen={setSnackbarOpen} />
-              <CardInfo title='Total' amount={`${totalCount} transactions`} icon='/icon/transac-icon.svg' setSnackbarOpen={setSnackbarOpen} />
+              <CardInfo 
+                title='Balance' 
+                amount={`${balance?.displayValue}`}
+                walletAddress={user?.walletAddress} 
+                icon='/icon/balance-icon.svg'
+                setSnackbarOpen={setSnackbarOpen} />
+              <CardInfo 
+                title='Send' 
+                amount={`${sendCount}`} 
+                icon='/icon/send-icon.svg' 
+                setSnackbarOpen={setSnackbarOpen} />
+              <CardInfo 
+                title='Receive' 
+                amount={`${receiveCount}`} 
+                icon='/icon/receive-icon.svg' 
+                setSnackbarOpen={setSnackbarOpen} />
+              <CardInfo 
+                title='Total' 
+                amount={`${totalCount}`} 
+                icon='/icon/transac-icon.svg' 
+                setSnackbarOpen={setSnackbarOpen} />
             </Stack>
             
             <Typography variant="h6" gutterBottom>
@@ -101,7 +118,7 @@ const DashboardPage: React.FC = () => {
             ) : (
               <Box sx={{ width: '100%', overflowX: 'auto' }}>
                 <TableContainer component={Paper} sx={{ boxShadow: 'none', backgroundColor: 'white', margin: 'auto' }}>
-                  <Table sx={{ borderCollapse: 'collapse', minWidth: 650 }}>
+                  <Table sx={{ borderCollapse: 'collapse'}}>
                     <TableHead>
                       <TableRow>
                         <TableCell sx={{ borderBottom: 'none', fontWeight: 'light', fontSize: 'body2.fontSize' }}></TableCell>

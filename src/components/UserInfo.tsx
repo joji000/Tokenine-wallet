@@ -113,7 +113,12 @@ const UserInfoForm: React.FC = () => {
         Edit User Information
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box 
+        sx={{ display: 'flex', 
+          gap: 2,
+          flexDirection:{
+            xs: 'column', md: 'row'} 
+          }}>
           <FormControl variant="outlined" sx={{ minWidth: 120 }}>
             <InputLabel>คำนำหน้า</InputLabel>
             <Select

@@ -144,7 +144,12 @@ const AddressForm: React.FC = () => {
             value={addressLine2}
             onChange={(e) => setAddressLine2(e.target.value)}
           />
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box 
+            sx={{ display: "flex", 
+            gap: 2,
+            flexDirection:{
+              xs: 'column', md: 'row'}
+            }}>
             <TextField
               label="อำเภอ/เขต"
               variant="outlined"
