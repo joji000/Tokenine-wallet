@@ -21,6 +21,7 @@ jobs:
           REMOTE_USER: ${{ secrets.SERVER_USERNAME }} # Changed 'username' to 'REMOTE_USER'
           SOURCE: "." # Deploying the entire workspace, you can adjust SOURCE and TARGET as needed
           TARGET: "~/deployWallet" # Changed target directory to ~/deployWallet based on your script
+          SCRIPT_BEFORE: "ls" # Added SCRIPT_BEFORE to force known_hosts update - workaround for "Permission denied" error
           SCRIPT_AFTER:
             | # Moved your script to SCRIPT_AFTER for better structure and clarity
             cd ~/deployWallet/wallet
