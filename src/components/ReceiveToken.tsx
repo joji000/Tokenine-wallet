@@ -197,6 +197,13 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user, balance }) => {
                 fullWidth
                 value={amount}
                 onChange={handleAmountChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {tokens.find((t) => t.address === token)?.symbol}
+                    </InputAdornment>
+                  ),
+                }}
               />
               {/* Token Selector */}
               <TextField

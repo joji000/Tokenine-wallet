@@ -80,7 +80,7 @@ const DashboardPage: React.FC = () => {
 
   return (
     <TheMainLayout>
-      <Box sx={{ p: 3 }}>
+      <Box>
         {isUserLoading || isBalanceLoading ? (
           <CircularProgress />
         ) : (

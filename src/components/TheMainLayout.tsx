@@ -9,7 +9,7 @@ import {
   ListItemText,
   IconButton,
   ListItemButton,
-  useMediaQuery
+  useMediaQuery,
 } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
