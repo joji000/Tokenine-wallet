@@ -13,8 +13,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: SSH Deploy
-        uses: actions/deploy-to-ssh@v2
+      - name: ssh deploy
+        uses: easingthemes/ssh-deploy@v5.1.0
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
