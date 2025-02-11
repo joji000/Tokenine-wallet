@@ -26,4 +26,16 @@ jobs:
             | # Moved your script to SCRIPT_AFTER for better structure and clarity
             cd ~/deployWallet
             npx prisma generate
-            docker compose up -d --build
+            docker compose -f docker-compose.yml up -d --build \
+              -e NODE_ENV=production \
+              -e NEXT_PUBLIC_API_ENDPOINT="${{ secrets.NEXT_PUBLIC_API_ENDPOINT }}" \
+              -e NEXT_PUBLIC_API_KEY="${{ secrets.NEXT_PUBLIC_API_KEY }}" \
+              -e NEXT_PUBLIC_SUPABASE_URL="${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" \
+              -e NEXT_PUBLIC_SUPABASE_ANON_KEY="${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" \
+              -e DATABASE_URL="${{ secrets.DATABASE_URL }}" \
+              -e DIRECT_URL="${{ secrets.DIRECT_URL }}" \
+              -e NEXT_PUBLIC_EXP_BLOCKSCOUNT_URL="${{ secrets.NEXT_PUBLIC_EXP_BLOCKSCOUNT_URL }}" \
+              -e ENGINE_BASE_URL="${{ secrets.ENGINE_BASE_URL }}" \
+              -e ENGINE_X_BACKEND_WALLET_ADDRESS="${{ secrets.ENGINE_X_BACKEND_WALLET_ADDRESS }}" \
+              -e ENGINE_AUTHORIZATION_TOKEN="${{ secrets.ENGINE_AUTHORIZATION_TOKEN }}" \
+              -e ENGINE_CHAIN_ID="${{ secrets.ENGINE_CHAIN_ID }}"
