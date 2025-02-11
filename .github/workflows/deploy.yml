@@ -25,4 +25,4 @@ jobs:
           SCRIPT_AFTER:
             | # Moved your script to SCRIPT_AFTER for better structure and clarity
             cd ~/deployWallet/wallet
-            docker-compose up -d --build
+            docker compose up -d --build
