@@ -13,21 +13,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: ssh deploy
-        uses: easingthemes/ssh-deploy@v5.1.0
+      - name: SSH Deploy
+        uses: easingthemes/ssh-deploy@main # Updated to the latest version
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_PRIVATE_KEY }}
-          script: |
-            # 1. Create the directory on the server (if it doesn't exist)
-            mkdir -p ~/deployWallet
-
-            # 2. Copy the files from the GitHub Actions runner to the server
-            rsync -avz $GITHUB_WORKSPACE/ ~/deployWallet/
-
-            # 3. Navigate to the directory
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }} # Changed 'key' to 'SSH_PRIVATE_KEY' and using secret name as suggested
+          REMOTE_HOST: ${{ secrets.SERVER_IP }} # Changed 'host' to 'REMOTE_HOST'
+          REMOTE_USER: ${{ secrets.SERVER_USERNAME }} # Changed 'username' to 'REMOTE_USER'
+          SOURCE: "." # Deploying the entire workspace, you can adjust SOURCE and TARGET as needed
+          TARGET: "~/deployWallet" # Changed target directory to ~/deployWallet based on your script
+          SCRIPT_AFTER:
+            | # Moved your script to SCRIPT_AFTER for better structure and clarity
             cd ~/deployWallet/wallet
-
-            # 4. Run Docker Compose (assuming docker-compose.yml is in the repo's root)
             docker-compose up -d --build
