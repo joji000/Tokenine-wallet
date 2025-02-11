@@ -24,5 +24,5 @@ jobs:
           SCRIPT_BEFORE: "ls" # Added SCRIPT_BEFORE to force known_hosts update - workaround for "Permission denied" error
           SCRIPT_AFTER:
             | # Moved your script to SCRIPT_AFTER for better structure and clarity
-            cd ~/deployWallet/wallet
+            cd ~/deployWallet
             docker compose up -d --build
