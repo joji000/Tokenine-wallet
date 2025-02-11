@@ -25,4 +25,5 @@ jobs:
           SCRIPT_AFTER:
             | # Moved your script to SCRIPT_AFTER for better structure and clarity
             cd ~/deployWallet
+            npx prisma generate
             docker compose up -d --build
