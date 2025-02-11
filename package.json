@@ -36,7 +36,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@prisma/client": "^6.4.0-dev.15",
+    "@prisma/client": "^6.3.1",
     "@tanstack/react-query": "^5.66.0",
     "@types/jquery": "^3.5.32",
     "@types/node": "^20",
@@ -46,7 +46,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.6",
-    "prisma": "^6.4.0-dev.15",
+    "prisma": "^6.3.1",
     "typescript": "^5"
   }
 }
