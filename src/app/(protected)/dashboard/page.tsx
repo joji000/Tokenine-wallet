@@ -171,7 +171,7 @@ const DashboardPage: React.FC = () => {
                               </Tooltip>
                             </TableCell>
                           )}
-                          <TableCell sx={{ borderBottom: 'none', display: 'flex', alignItems: 'center' }}>
+                          <TableCell sx={{ borderBottom: 'none', alignItems: 'center' }}>
                             {token.value}
                           </TableCell>
                         </TableRow>

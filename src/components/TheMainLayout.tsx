@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   CssBaseline,
@@ -61,6 +61,10 @@ const TheMainLayout = ({ children }: TheMainLayoutProps) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const pathname = usePathname();
   const [open, setOpen] = useState(!isMobile);
+
+  useEffect(() => {
+    setOpen(!isMobile);
+  }, [isMobile]);
 
   const handleDrawerOpen = () => {
     setOpen(true);
