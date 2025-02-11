@@ -2,18 +2,27 @@ services:
   nextjs-app:
     build: .
     ports:
-      - "3000"
+      - "3000:3000"
     environment:
       - NODE_ENV=production # or development
-    env_file:
-      - .env # If you are using .env
+      - NEXT_PUBLIC_API_ENDPOINT=${NEXT_PUBLIC_API_ENDPOINT}
+      - NEXT_PUBLIC_API_KEY=${NEXT_PUBLIC_API_KEY}
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - DATABASE_URL=${DATABASE_URL}
+      - DIRECT_URL=${DIRECT_URL}
+      - NEXT_PUBLIC_EXP_BLOCKSCOUNT_URL=${NEXT_PUBLIC_EXP_BLOCKSCOUNT_URL}
+      - ENGINE_BASE_URL=${ENGINE_BASE_URL}
+      - ENGINE_X_BACKEND_WALLET_ADDRESS=${ENGINE_X_BACKEND_WALLET_ADDRESS}
+      - ENGINE_AUTHORIZATION_TOKEN=${ENGINE_AUTHORIZATION_TOKEN}
+      - ENGINE_CHAIN_ID=${ENGINE_CHAIN_ID}
     restart: always
 
-  nginx:
-    image: nginx:latest
-    ports:
-      - "80:80" # Map host port 80 to container port 80
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro # Mount nginx config
-    depends_on:
-      - nextjs-app
+  # nginx:
+  #   image: nginx:latest
+  #   ports:
+  #     - "80:80" # Map host port 80 to container port 80
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro # Mount nginx config
+  #   depends_on:
+  #     - nextjs-app
