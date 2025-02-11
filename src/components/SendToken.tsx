@@ -26,9 +26,10 @@ import { Token } from '@/interfaces/token.interface';
 interface SendTokenProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any;
+  balance: string;
 }
 
-const SendToken: React.FC<SendTokenProps> = ({ user }) => {
+const SendToken: React.FC<SendTokenProps> = ({ user, balance }) => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [fromAccount, setFromAccount] = useState('');
   const [toAccount, setToAccount] = useState('');
@@ -58,10 +59,10 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
   const fetchTokensCallback = useCallback(async () => {
     if (!user?.walletAddress) return;
 
-    const tokensData = await fetchTokens(user.walletAddress);
+    const tokensData = await fetchTokens(user.walletAddress, balance);
     setTokens(tokensData);
     setFromAccount(user.walletAddress);
-  }, [user?.walletAddress]);
+  }, [user?.walletAddress,balance]);
 
   useEffect(() => {
     fetchTokensCallback();
@@ -124,6 +125,11 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
 
       setAlertType('success');
       setAlertMessage(`Transaction sent: ${amount} ${token} from ${fromAccount} to ${toAccount}.`);
+      setFromAccount(user?.walletAddress || '');
+      setToAccount('');
+      setAmount('');
+      setToken('');
+      setTokenBalance('');
       setSnackbarOpen(true);
     } catch (error: unknown) {
       console.error('Transaction failed:', (error as Error).message || error);
@@ -220,8 +226,12 @@ const SendToken: React.FC<SendTokenProps> = ({ user }) => {
             {tokens.map((token) => (
               <MenuItem key={token.address} value={token.symbol}>
                 <Box display="flex" alignItems="center" gap={1}>
-                  {token.logoURI && (
-                    <Avatar src={token.logoURI || undefined} alt={token.symbol} sx={{ width: 24, height: 24 }} />
+                  {token.logoURI ? (
+                    <Avatar src={token.logoURI} alt={token.symbol} />
+                    ) : (
+                    <Avatar sx={{ bgcolor: 'black', fontSize: '0.75rem' }}>
+                      {token.symbol}
+                    </Avatar>
                   )}
                   {token.symbol}
                 </Box>

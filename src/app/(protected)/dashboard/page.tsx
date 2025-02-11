@@ -48,12 +48,12 @@ const DashboardPage: React.FC = () => {
   const isMobile = useMediaQuery('(max-width:600px)');
 
   const fetchTokensCallback = useCallback(async () => {
-    if (!user?.walletAddress) return;
+    if (!user?.walletAddress || !balance?.displayValue) return;
 
-    const tokensData = await fetchTokens(user.walletAddress);
+    const tokensData = await fetchTokens(user.walletAddress, balance.displayValue);
     setTokens(tokensData);
     setLoadingTokens(false);
-  }, [user?.walletAddress]);
+  }, [user?.walletAddress, balance?.displayValue]);
 
   const fetchTransactionDataCallback = useCallback(async () => {
     if (!user?.walletAddress) return;
@@ -133,7 +133,13 @@ const DashboardPage: React.FC = () => {
                       {tokens.map((token, index) => (
                         <TableRow key={index}>
                           <TableCell sx={{ borderBottom: 'none' }}>
-                            {token.logoURI ? <Avatar src={token.logoURI} alt={token.symbol} /> : 'N/A'}
+                            {token.logoURI ? (
+                              <Avatar src={token.logoURI} alt={token.symbol} />
+                            ) : (
+                              <Avatar sx={{ bgcolor: 'black', fontSize: '0.75rem' }}>
+                                {token.symbol}
+                              </Avatar>
+                            )}
                           </TableCell>
                           <TableCell sx={{ borderBottom: 'none', display: 'flex', alignItems: 'center' }}>
                             {token.symbol}

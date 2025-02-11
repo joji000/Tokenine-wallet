@@ -19,15 +19,16 @@ import {
 import QRCode from 'qrcode';
 import Image from 'next/image';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import { Token } from '@/interfaces/token.interface'; // Adjust the import path as necessary
-import { fetchTokens } from '@/services/token.services'; // Adjust the import path as necessary
+import { Token } from '@/interfaces/token.interface'; 
+import { fetchTokens } from '@/services/token.services';
 
 interface ReceiveTokenProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any;
+  balance: string;
 }
 
-const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
+const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user, balance }) => {
   const walletCanvasRef = useRef<HTMLCanvasElement>(null);
   const [tokens, setTokens] = useState<Token[]>([]);
   const [amount, setAmount] = useState('');
@@ -42,9 +43,9 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
   const fetchTokensCallback = useCallback(async () => {
     if (!user?.walletAddress) return;
 
-    const tokensData = await fetchTokens(user.walletAddress);
+    const tokensData = await fetchTokens(user.walletAddress, balance);
     setTokens(tokensData);
-  }, [user?.walletAddress]);
+  }, [user?.walletAddress, balance]);
 
   useEffect(() => {
     fetchTokensCallback();
@@ -93,8 +94,15 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
     }
 
     if (user?.walletAddress) {
-      const amountInExponential = (parseFloat(amount) * Math.pow(10, 18)).toString();
-      const paymentRequest = `ethereum:${token}@7117/transfer?address=${user.walletAddress}&uint256=${amountInExponential}`;
+      let paymentRequest = '';
+      if (token === '0x0000000000000000000000000000000000000000') { // Native coin
+        const amountInExponential = (parseFloat(amount) * Math.pow(10, 18)).toString();
+        paymentRequest = `ethereum:${user.walletAddress}@7117?value=${amountInExponential}`;
+      } else {
+        const amountInExponential = (parseFloat(amount) * Math.pow(10, 18)).toString();
+        paymentRequest = `ethereum:${token}@7117/transfer?address=${user.walletAddress}&uint256=${amountInExponential}`;
+      }
+
       QRCode.toDataURL(paymentRequest, { width: 200 }, (error, url) => {
         if (error) {
           console.error(error);
@@ -202,8 +210,12 @@ const ReceiveToken: React.FC<ReceiveTokenProps> = ({ user }) => {
                 {tokens.map((token) => (
                   <MenuItem key={token.address} value={token.address}>
                     <Box display="flex" alignItems="center" gap={1}>
-                      {token.logoURI && (
-                        <Avatar src={token.logoURI || undefined} alt={token.symbol} sx={{ width: 24, height: 24 }} />
+                      {token.logoURI ? (
+                        <Avatar src={token.logoURI} alt={token.symbol} />
+                      ) : (
+                        <Avatar sx={{ bgcolor: 'black', fontSize: '0.75rem' }}>
+                          {token.symbol}
+                        </Avatar>
                       )}
                       {token.symbol}
                     </Box>

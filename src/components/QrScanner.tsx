@@ -35,8 +35,7 @@ const parseEthereumQR = (qrCode: string) => {
 
     // Convert scientific notation (e.g., 2e18) to decimal format
     const decimalValue = parseFloat(value).toFixed(18).replace(/\.?0+$/, '');
-    const LastValue = parseFloat(decimalValue) * Math.pow(10,-18)
-    
+    const lastValue = parseFloat(decimalValue) * Math.pow(10, -18);
 
     // If it's a transfer case (Case 1), treat ethereum: as token contract
     const isTransfer = !!match[3];
@@ -45,7 +44,7 @@ const parseEthereumQR = (qrCode: string) => {
       tokenContract: isTransfer ? tokenOrRecipient : null,
       address: recipientAddress,
       chainId,
-      value: LastValue,
+      value: lastValue.toString(),
     };
   } catch {
     throw new Error('Failed to parse QR code');
@@ -67,7 +66,17 @@ const QRScanner: React.FC<QRScannerProps> = ({ open, setOpen, onScanSuccess }) =
       if (data) {
         try {
           const parsedData = parseEthereumQR(data);
-          onScanSuccess(parsedData.tokenContract ?? '', parsedData.address, parsedData.value.toString());
+          const tokenContract = parsedData.tokenContract ?? '';
+          const address = parsedData.address;
+          const value = parsedData.value;
+
+          // Automatically select XL3 if the token contract is null (native coin)
+          if (!tokenContract) {
+            onScanSuccess('0x0000000000000000000000000000000000000000', address, value);
+          } else {
+            onScanSuccess(tokenContract, address, value);
+          }
+
           setErrorMessage(null);
           setOpen(false);
         } catch (error: unknown) {
