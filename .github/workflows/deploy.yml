@@ -1,0 +1,41 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: SSH Deploy
+        uses: easingthemes/ssh-deploy@main # Updated to the latest version
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.SERVER_PRIVATE_KEY }} # Changed 'key' to 'SSH_PRIVATE_KEY' and using secret name as suggested
+          REMOTE_HOST: ${{ secrets.SERVER_IP }} # Changed 'host' to 'REMOTE_HOST'
+          REMOTE_USER: ${{ secrets.SERVER_USERNAME }} # Changed 'username' to 'REMOTE_USER'
+          SOURCE: "." # Deploying the entire workspace, you can adjust SOURCE and TARGET as needed
+          TARGET: "~/deployWallet" # Changed target directory to ~/deployWallet based on your script
+          SCRIPT_BEFORE: "ls" # Added SCRIPT_BEFORE to force known_hosts update - workaround for "Permission denied" error
+          SCRIPT_AFTER:
+            | # Moved your script to SCRIPT_AFTER for better structure and clarity
+            cd ~/deployWallet
+            npx prisma generate
+            echo "NODE_ENV=production" >> .env
+            echo "NEXT_PUBLIC_API_ENDPOINT=${{ secrets.NEXT_PUBLIC_API_ENDPOINT }}" >> .env
+            echo "NEXT_PUBLIC_API_KEY=${{ secrets.NEXT_PUBLIC_API_KEY }}" >> .env
+            echo "NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}" >> .env
+            echo "NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}" >> .env
+            echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
+            echo "DIRECT_URL=${{ secrets.DIRECT_URL }}" >> .env
+            echo "NEXT_PUBLIC_EXP_BLOCKSCOUNT_URL=${{ secrets.NEXT_PUBLIC_EXP_BLOCKSCOUNT_URL }}" >> .env
+            echo "ENGINE_BASE_URL=${{ secrets.ENGINE_BASE_URL }}" >> .env
+            echo "ENGINE_X_BACKEND_WALLET_ADDRESS=${{ secrets.ENGINE_X_BACKEND_WALLET_ADDRESS }}" >> .env
+            echo "ENGINE_AUTHORIZATION_TOKEN=${{ secrets.ENGINE_AUTHORIZATION_TOKEN }}" >> .env
+            echo "ENGINE_CHAIN_ID=${{ secrets.ENGINE_CHAIN_ID }}" >> .env
+            docker compose up -d --build
