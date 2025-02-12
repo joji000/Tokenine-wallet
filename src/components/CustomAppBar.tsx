@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
   InputBase,
   IconButton,
   Box,
-  useMediaQuery
+  useMediaQuery,
+  Avatar
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import { styled } from '@mui/material/styles';
 import UserMenu from './UserMenu';
+import QRScanner from './QrScanner';
+import { useRouter } from 'next/navigation';
 
 const drawerWidth = 240;
 
@@ -42,6 +45,19 @@ interface CustomAppBarProps {
 
 const CustomAppBar = ({ open, handleDrawerOpen }: CustomAppBarProps) => {
   const isMobile = useMediaQuery('(max-width:600px)');
+  const [showScanner, setShowScanner] = useState(false);
+  const router = useRouter();
+
+  const handleQrScanSuccess = (scannedTokenContract: string | null, scannedAddress: string, scannedValue: string) => {
+    if (scannedTokenContract) {
+      console.log(`Scanned Token Contract: ${scannedTokenContract}`);
+    }
+    console.log(`Scanned Address: ${scannedAddress}`);
+    console.log(`Scanned Value: ${scannedValue}`);
+    
+    // Navigate to /transfer with the scanned data
+    router.push(`/transfer?tokenContract=${scannedTokenContract}&address=${scannedAddress}&value=${scannedValue}`);
+  };
 
   return (
     <AppBarStyled position="fixed" open={open}>
@@ -59,11 +75,20 @@ const CustomAppBar = ({ open, handleDrawerOpen }: CustomAppBarProps) => {
           <SearchIcon sx={{ color: 'gray' }} />
           <InputBase placeholder="Search" sx={{ ml: 1 }} />
         </Box>
+        <IconButton sx ={{ ml: 1}}
+        onClick={() => setShowScanner(!showScanner)} size='medium'>
+          <Avatar 
+            src='/icon/scanqricon.svg' 
+            variant="square"
+            sx={{ width:'2.3rem', height:'2.3rem' }}
+          />
+        </IconButton>
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           {!isMobile && <UserMenu />}
         </Box>
       </Toolbar>
+      <QRScanner open={showScanner} setOpen={setShowScanner} onScanSuccess={handleQrScanSuccess} />
     </AppBarStyled>
   );
 };

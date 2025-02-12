@@ -22,6 +22,7 @@ import QRScanner from '@/components/QrScanner';
 import { fetchTokens } from '@/services/token.services';
 import { transferTokens } from '@/services/transfer.services';
 import { Token } from '@/interfaces/token.interface';
+import { useSearchParams } from 'next/navigation';
 
 interface SendTokenProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,19 +43,10 @@ const SendToken: React.FC<SendTokenProps> = ({ user, balance }) => {
   const [showScanner, setShowScanner] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
-  const handleQrScanSuccess = (scannedTokenContract: string | null, scannedAddress: string, scannedValue: string) => {
-    setToAccount(scannedAddress);
-    setAmount(scannedValue);
-    // If QR contains a token contract, match it to the correct token
-    if (scannedTokenContract) {
-      const matchedToken = tokens.find((t) => t.address.toLowerCase() === scannedTokenContract.toLowerCase());
-      if (matchedToken) {
-        setToken(matchedToken.symbol);
-        setTokenBalance(matchedToken.value);
-      }
-    }
-    setShowScanner(false);
-  };
+  const searchParams = useSearchParams();
+  const tokenContract = searchParams?.get('tokenContract') || '';
+  const address = searchParams?.get('address') || '';
+  const value = searchParams?.get('value') || '';
 
   const fetchTokensCallback = useCallback(async () => {
     if (!user?.walletAddress) return;
@@ -67,6 +59,38 @@ const SendToken: React.FC<SendTokenProps> = ({ user, balance }) => {
   useEffect(() => {
     fetchTokensCallback();
   }, [fetchTokensCallback]);
+
+  useEffect(() => {
+    if (tokenContract && address && value && tokens.length > 0) {
+      const getToken = tokens.find((t) => t.address.toLowerCase() === tokenContract.toLowerCase());
+      setToken(getToken?.symbol || '');
+      setTokenBalance(getToken?.value || '0');
+      setToAccount(address);
+      setAmount(value);
+
+      const url = new URL(window.location.href);
+      url.searchParams.delete('tokenContract');
+      url.searchParams.delete('address');
+      url.searchParams.delete('value');
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [tokenContract, address, value, tokens]);
+
+
+
+  const handleQrScanSuccess = (scannedTokenContract: string | null, scannedAddress: string, scannedValue: string) => {
+    setToAccount(scannedAddress);
+    setAmount(scannedValue);
+    
+    if (scannedTokenContract) {
+      const matchedToken = tokens.find((t) => t.address.toLowerCase() === scannedTokenContract.toLowerCase());
+      if (matchedToken) {
+        setToken(matchedToken.symbol);
+        setTokenBalance(matchedToken.value);
+      }
+    }
+    setShowScanner(false);
+  };
 
   const handleTokenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedToken = e.target.value;
