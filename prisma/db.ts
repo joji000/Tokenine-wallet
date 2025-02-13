@@ -7,7 +7,7 @@ declare const globalThis: {
 } & typeof global
 
 export const getPrismaClient = () => {
-  if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === 'production') {
     return prismaClientSingleton()
   }
   globalThis.prismaGlobal ||= prismaClientSingleton()
