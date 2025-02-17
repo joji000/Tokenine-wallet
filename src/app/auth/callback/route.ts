@@ -6,9 +6,7 @@ export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
 
-  // Ensure origin is set correctly
   const origin = process.env.NEXT_PUBLIC_BASE_URL || requestUrl.origin;
-  console.log("origin", origin);
   const redirectTo = requestUrl.searchParams.get("redirect_to")?.toString();
 
   if (code) {
@@ -19,7 +17,7 @@ export async function GET(request: Request) {
     } = await supabase.auth.getUser();
 
     if (user) {
-      createUserIfNotExists({
+      await createUserIfNotExists({
         providerId: user.id,
         email: user.email,
       });
