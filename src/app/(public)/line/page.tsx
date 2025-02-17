@@ -1,65 +1,33 @@
 'use client';
 import React, { useEffect } from "react";
-import liff from "@line/liff";
-import jwt from 'jsonwebtoken';
+import { initLiff, liff } from '@/libs/line.lib';
 
 const LinePage = () => {
 
-  useEffect(() => {
-    const handleLogin = async () => {
-      try {
-        const isLoggedIn = await liff.isLoggedIn();
-        if (!isLoggedIn) {
-          liff.login();
-        } else {
-          const profile = await liff.getProfile();
-          console.log(profile);
-          const idToken = liff.getIDToken();
-          console.log(idToken);
-          const decodedIDToken = liff.getDecodedIDToken();
-          const userid = decodedIDToken ? decodedIDToken.sub : null;
-          console.log(userid);
+    useEffect(() => {
+        initLiff().then(() => {
+            handlelogin();
+        });
+    
+    }, []);
 
-          if (!idToken) {
-            throw new Error('ID token is null');
-          }
-          const decodedToken = jwt.decode(idToken);
+    const handlelogin = async () => {
+        try{
 
-          const { sub: providerId, email } = decodedToken as jwt.JwtPayload;
-          console.log('Provider ID:', providerId);
-          console.log('Email:', email);
-          
-          // Create a custom JWT token for Supabase
-          const jwtSecret = process.env.NEXT_PUBLIC_SUPABASE_JWT_SECRET;
-          console.log('JWT Secret:', jwtSecret); // Add this line to debug
-          if (!jwtSecret) {
-            throw new Error('SUPABASE_JWT_SECRET is not defined');
-          }
+            const isLoggedIn = await liff.isLoggedIn();
+            console.log(isLoggedIn);
+            if(!isLoggedIn){
+                liff.login();
+            }
 
-          if (typeof jwtSecret !== 'string') {
-            throw new Error('SUPABASE_JWT_SECRET is not a valid string');
-          }
-          
-          const customToken = jwt.sign(
-            { sub: providerId, email },
-            jwtSecret
-          );
-
-          console.log(customToken);
+            const profile = await liff.getProfile();
+            console.log(profile);
+            const idToken = liff.getIDToken();
+            console.log(idToken);
+        }catch(error){
+            console.log(error);
         }
-      } catch (error) {
-        console.error('Error during login process:', error);
-      }
-    };
-
-    liff.init({ liffId: process.env.NEXT_PUBLIC_LINE_LIFF_ID || '' })
-      .then(() => {
-        handleLogin();
-      })
-      .catch((error) => {
-        console.error('LIFF initialization failed', error);
-      });
-  }, []);
+    }
 
   return (
     <div>
