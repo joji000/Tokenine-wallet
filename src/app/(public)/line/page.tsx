@@ -24,6 +24,8 @@ const LinePage = () => {
             console.log(profile);
             const idToken = liff.getIDToken();
             console.log(idToken);
+            const decodedIdToken = liff.getDecodedIDToken();
+            console.log(decodedIdToken?.email);
         }catch(error){
             console.log(error);
         }
