@@ -53,7 +53,7 @@ const CardInfo: React.FC<BalanceCardProps> = ({ title, amount, walletAddress, ic
         <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
           {formatBalance(amount)} {title === 'Balance' && (
             <Typography variant="body1" component="span" sx={{ ml: 0.5 }}>
-              XL3
+              PLG
             </Typography>
           )}
         </Typography>

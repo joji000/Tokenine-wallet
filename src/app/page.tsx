@@ -87,8 +87,8 @@ const Home = () => {
         >
           <Box
             component="img"
-            src="/icon/tokenine-logo.svg"
-            alt="TokenNine Logo"
+            src="/icon/point-ledger-logo.svg"
+            alt="PointLedger Logo"
             sx={{ width: { xs: '40vw', md: '20vw' }, mb: 2 }}
           />
           <Typography variant="h5" gutterBottom color="black">

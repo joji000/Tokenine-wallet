@@ -8,7 +8,7 @@ export const fetchTokens = async (walletAddress: string, nativeBalance: string):
   try {
     const [tokenResponse, logoResponse] = await Promise.all([
       axios.get(`${url}/api/v2/addresses/${walletAddress}/tokens?type=ERC-20`),
-      axios.get('https://raw.githubusercontent.com/dome/asset/refs/heads/main/tokens.json?fbclid=IwY2xjawH-wSZleHRuA2FlbQIxMAABHaUwLSgD8RtvfHo-Yf3CROckUp7YgzmvyY-WNNER1YHTHk9VVGWc6es3YQ_aem_UPK6zvY1G1S6vjC2IHqf2A')
+      axios.get('https://raw.githubusercontent.com/dome/asset/refs/heads/main/tokens.json')
     ]);
 
     const logoData: LogoData[] = logoResponse.data.tokens;
@@ -27,7 +27,7 @@ export const fetchTokens = async (walletAddress: string, nativeBalance: string):
 
     // Add tokens that are not in the wallet with value 0
     const additionalTokens = logoData
-      .filter((logo) => logo.chainId === 7117 && !tokenAddresses.includes(logo.address))
+      .filter((logo) => logo.chainId === 9889 && !tokenAddresses.includes(logo.address))
       .map((logo) => ({
         address: logo.address,
         symbol: logo.symbol,
@@ -38,11 +38,11 @@ export const fetchTokens = async (walletAddress: string, nativeBalance: string):
 
     // Add native coin
     const nativeCoin: Token = {
-      symbol: 'XL3',
+      symbol: 'PLG',
       address: '0x0000000000000000000000000000000000000000',
       value: nativeBalance,
       logoURI: '',
-      chainId: 7117,
+      chainId: 9889,
     };
 
     return [nativeCoin, ...formattedData, ...additionalTokens];
@@ -53,7 +53,7 @@ export const fetchTokens = async (walletAddress: string, nativeBalance: string):
       const logoData: LogoData[] = logoResponse.data.tokens;
 
       const additionalTokens = logoData
-        .filter((logo) => logo.chainId === 7117)
+        .filter((logo) => logo.chainId === 9889)
         .map((logo) => ({
           address: logo.address,
           symbol: logo.symbol,
@@ -63,11 +63,11 @@ export const fetchTokens = async (walletAddress: string, nativeBalance: string):
         }));
 
       const nativeCoin: Token = {
-        symbol: 'XL3',
+        symbol: 'PLG',
         address: '0x0000000000000000000000000000000000000000',
         value: '0',
         logoURI: '',
-        chainId: 7117,
+        chainId: 9889,
       };
 
       return [nativeCoin, ...additionalTokens];
