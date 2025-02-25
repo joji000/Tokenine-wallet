@@ -1,55 +1,15 @@
-'use client';
-import React, { useEffect } from "react";
-import { useRouter } from 'next/navigation';
-import { initLiff, liff } from '@/libs/line.lib';
+'use client'
+import React from 'react';
+import { useSession } from 'next-auth/react';
 
-const LinePage = () => {
-  const router = useRouter();
+const Line = () => {
+  const { data: session } = useSession();
 
-  useEffect(() => {
-    initLiff().then(() => {
-      handleLogin();
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  if (session && session.user) {
+    return <p>Signed in as {session.user.email} </p>;
+  }
 
-  const handleLogin = async () => {
-    try {
-      const isLoggedIn = await liff.isLoggedIn();
-      if (!isLoggedIn) {
-        liff.login();
-      }
-
-      const idToken = liff.getIDToken();
-      console.log("ID Token:", idToken);
-
-      // Send the ID token to the server
-      const response = await fetch('/api/auth/callback/line', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ idToken }),
-      });
-
-      if (response.ok) {
-        const { redirectTo } = await response.json();
-        console.log("Server Response:", redirectTo);
-        router.push(redirectTo);
-      } else {
-        const errorText = await response.text();
-        console.error('Failed to authenticate with the server:', errorText);
-      }
-    } catch (error) {
-      console.error('Error during LIFF login:', error);
-    }
-  };
-
-  return (
-    <div>
-      <h1>Line Page</h1>
-    </div>
-  );
+  return <p>Not signed in</p>;
 };
 
-export default LinePage;
+export default Line;

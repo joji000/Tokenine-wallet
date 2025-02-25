@@ -3,11 +3,11 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter'
 import { dehydrate, HydrationBoundary } from '@tanstack/react-query'
 import type { Metadata } from 'next'
 import { Noto_Sans_Thai } from 'next/font/google'
-
 import { getQueryClient } from '@/libs/react-query.lib'
 import theme from '@/Theme'
 
 import ReactQueryProvider from './providers/ReactQueryProvider'
+import CustomSessionProvider from './providers/SessionProvider'
 import './globals.css'
 
 const notoSansThai = Noto_Sans_Thai({
@@ -36,15 +36,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={notoSansThai.className}>
+        <CustomSessionProvider>
         <AppRouterCacheProvider>
           <ReactQueryProvider>
-            <HydrationBoundary state={dehydratedState}>
-              <ThemeProvider theme={theme}>
-                {children}
-              </ThemeProvider>
-            </HydrationBoundary>
+              <HydrationBoundary state={dehydratedState}>
+                <ThemeProvider theme={theme}>
+                  {children}
+                </ThemeProvider>
+              </HydrationBoundary>
           </ReactQueryProvider>
         </AppRouterCacheProvider>
+        </CustomSessionProvider>
       </body>
     </html>
   )

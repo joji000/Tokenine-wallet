@@ -5,20 +5,23 @@ import { useRouter } from 'next/navigation';
 import CustomLoginButton from '@/components/CustomLoginButton';
 import { createClient } from '@/utils/supabase/client.util';
 import { Route } from '@/enums/route.enum';
-import { initLiff, liff } from '@/libs/line.lib';
+import { signIn, useSession } from 'next-auth/react'
 
 const Home = () => {
   const supabase = createClient();
   const router = useRouter();
+  const { data: session } = useSession();
 
   //line-login
-  useEffect(() => {
-    initLiff();
-  }, []);
-
   const handleLineLogin = () => {
-    liff.login();
+    signIn('line');
   };
+  useEffect(() => {
+    if (session) {
+      router.push('/line');
+    }
+  }
+  , [session, router]);
 
   //supabase-login
   useEffect(() => {

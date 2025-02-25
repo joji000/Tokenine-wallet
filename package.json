@@ -3,16 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --experimental-https",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@auth/supabase-adapter": "^1.7.4",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@line/liff": "^2.25.1",
     "@mui/icons-material": "^6.4.2",
     "@mui/material": "^6.4.2",
     "@mui/material-nextjs": "^6.4.2",
@@ -31,6 +31,7 @@
     "jquery-ui-dist": "^1.13.3",
     "jsonwebtoken": "^9.0.2",
     "next": "15.1.6",
+    "next-auth": "^4.24.11",
     "numeral": "^2.0.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
