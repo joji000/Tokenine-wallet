@@ -99,11 +99,11 @@ const Home = () => {
             text="Continue with Google"
             onClick={() => handleSignIn('google')}
           />
-          <CustomLoginButton
+          {/* <CustomLoginButton
             logo="/icon/apple-logo.svg"
             text="Continue with Apple"
             onClick={() => handleSignIn('apple')}
-          />
+          /> */}
         </Box>
       </Stack>
     </Box>
