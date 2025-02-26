@@ -18,10 +18,12 @@ const Home = () => {
   };
   useEffect(() => {
     if (session) {
-      router.push('/line');
+      const supabaseAccessToken = session.supabaseAccessToken;
+      if (supabaseAccessToken) {
+      router.push(`/auth/callback?supabaseAccessToken=${supabaseAccessToken}`);
+      }
     }
-  }
-  , [session, router]);
+  }, [session, router]);
 
   //supabase-login
   useEffect(() => {
