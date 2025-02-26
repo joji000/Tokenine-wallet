@@ -6,6 +6,7 @@ import CustomLoginButton from '@/components/CustomLoginButton';
 import { createClient } from '@/utils/supabase/client.util';
 import { Route } from '@/enums/route.enum';
 import { signIn, useSession } from 'next-auth/react'
+import Cookies from 'js-cookie';
 
 const Home = () => {
   const supabase = createClient();
@@ -20,7 +21,8 @@ const Home = () => {
     if (session) {
       const supabaseAccessToken = session.supabaseAccessToken;
       if (supabaseAccessToken) {
-      router.push(`/auth/callback?supabaseAccessToken=${supabaseAccessToken}`);
+        Cookies.set('supabaseAccessToken', supabaseAccessToken, { secure: true, sameSite: 'Strict' });
+        router.push('/auth/callback');
       }
     }
   }, [session, router]);

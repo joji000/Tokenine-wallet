@@ -10,9 +10,11 @@ export async function GET(request: Request) {
   const origin = process.env.NEXT_PUBLIC_BASE_URL || requestUrl.origin;
   const redirectTo = requestUrl.searchParams.get("redirect_to")?.toString();
 
-  const supabaseAccessToken = requestUrl.searchParams.get("supabaseAccessToken");
+  const cookies = request.headers.get('cookie');
+  const supabaseAccessToken = cookies?.split('; ').find(row => row.startsWith('supabaseAccessToken='))?.split('=')[1];
+  console.log('supabaseAccessToken', supabaseAccessToken);
 
-  if(!code && supabaseAccessToken) {
+  if (!code && supabaseAccessToken) {
     const decoded = jwt.decode(supabaseAccessToken);
     if (decoded && typeof decoded !== 'string') {
       const { email, sub } = decoded;
