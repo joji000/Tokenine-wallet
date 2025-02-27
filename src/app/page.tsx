@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import CustomLoginButton from '@/components/CustomLoginButton';
 import { createClient } from '@/utils/supabase/client.util';
 import { Route } from '@/enums/route.enum';
-import { signIn, useSession } from 'next-auth/react'
-import Cookies from 'js-cookie';
+import { signIn ,useSession} from 'next-auth/react'
 
 const Home = () => {
   const supabase = createClient();
@@ -17,10 +16,10 @@ const Home = () => {
   const handleLineLogin = () => {
     signIn('line');
   };
+
   useEffect(() => {
-    if (session && session.supabaseAccessToken) {
-        Cookies.set('supabaseAccessToken', session.supabaseAccessToken, { secure: true, sameSite: 'Strict' });
-        router.push('/auth/callback');
+    if (session) {
+      router.push(Route.DASHBOARD);
     }
   }, [session, router]);
 

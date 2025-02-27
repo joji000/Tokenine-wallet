@@ -1,40 +1,31 @@
 import { NextResponse } from "next/server";
 import { createUserIfNotExists } from "@/server/services/user.service";
 import { createClient } from "@/utils/supabase/server.util";
-import { cookies } from "next/headers";
 import jwt, { JwtPayload } from "jsonwebtoken";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
   const origin = process.env.NEXT_PUBLIC_BASE_URL || requestUrl.origin;
   const redirectTo = requestUrl.searchParams.get("redirect_to")?.toString();
-  const cookieStore = await cookies();
 
-  // Check for supabaseAccessToken
-  const supabaseAccessToken = cookieStore.get("supabaseAccessToken")?.value;
-
-  // If there's a supabaseAccessToken, verify it and create the user if necessary
-  if (supabaseAccessToken) {
-    const signingSecret = process.env.SUPABASE_JWT_SECRET ?? "";
+  if (session?.supabaseAccessToken) {
+    const signingSecret = process.env.SUPABASE_JWT_SECRET || "";
+    const decodedToken = jwt.verify(
+      session.supabaseAccessToken as string,
+      signingSecret
+    ) as JwtPayload;
     try {
-      const verifiedToken = jwt.verify(
-        supabaseAccessToken,
-        signingSecret
-      ) as JwtPayload;
-      if (!verifiedToken.sub) {
-          throw new Error('Token invalid')
-      }
-      // If token is verified, create or get the user in public.users
       await createUserIfNotExists({
-        providerId: verifiedToken.sub,
-        email: verifiedToken.email as string,
+        providerId: decodedToken.sub as string,
+        email: session.user.email as string,
       });
-      return NextResponse.redirect(
-        redirectTo ? `${origin}${redirectTo}` : `${origin}/dashboard`
-      );
-    } catch (jwtError) {
-      console.error("Error verifying supabaseAccessToken:", jwtError);
+    } catch (error) {
+      console.error('Error creating', error);
     }
   }
  // If there is no supabaseAccessToken but there is a code
