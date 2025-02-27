@@ -5,6 +5,7 @@ import { createClient } from '@/utils/supabase/client.util';
 import useAuth from '@/hooks/auth/useAuth';
 import { useRouter } from 'next/navigation';
 import useGetMe from '@/hooks/user/useGetMe';
+import { signOut } from 'next-auth/react';
 
 const UserMenu = () => {
   const { isAuthenticated } = useAuth();
@@ -31,6 +32,7 @@ const UserMenu = () => {
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    await signOut();
     router.push('/');
   };
 

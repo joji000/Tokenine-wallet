@@ -10,7 +10,8 @@ import { signIn ,useSession} from 'next-auth/react'
 const Home = () => {
   const supabase = createClient();
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: sessionData } = useSession();
+  
 
   //line-login
   const handleLineLogin = () => {
@@ -18,10 +19,10 @@ const Home = () => {
   };
 
   useEffect(() => {
-    if (session) {
-      router.push(Route.DASHBOARD);
-    }
-  }, [session, router]);
+      if (sessionData) {
+        router.push(Route.DASHBOARD);
+      }
+  }, [sessionData, router]);
 
   //supabase-login
   useEffect(() => {
