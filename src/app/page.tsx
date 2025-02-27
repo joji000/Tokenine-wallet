@@ -18,12 +18,9 @@ const Home = () => {
     signIn('line');
   };
   useEffect(() => {
-    if (session) {
-      const supabaseAccessToken = session.supabaseAccessToken;
-      if (supabaseAccessToken) {
-        Cookies.set('supabaseAccessToken', supabaseAccessToken, { secure: true, sameSite: 'Strict' });
+    if (session && session.supabaseAccessToken) {
+        Cookies.set('supabaseAccessToken', session.supabaseAccessToken, { secure: true, sameSite: 'Strict' });
         router.push('/auth/callback');
-      }
     }
   }, [session, router]);
 

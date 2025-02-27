@@ -17,6 +17,12 @@ const handler = NextAuth({
         secret: process.env.SUPABASE_SERVICE_ROLE_KEY ?? '',
     }) as Adapter,
     callbacks: {
+        async signIn({ account, profile }) {
+            if (account?.provider === "line") {
+              return !!profile?.email;
+            }
+            return true;
+          },
         async session({ session, user }) {
           const signingSecret = process.env.SUPABASE_JWT_SECRET ?? ''
           if (signingSecret) {

@@ -1,43 +1,61 @@
 import { NextResponse } from "next/server";
 import { createUserIfNotExists } from "@/server/services/user.service";
 import { createClient } from "@/utils/supabase/server.util";
-import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
-
   const origin = process.env.NEXT_PUBLIC_BASE_URL || requestUrl.origin;
   const redirectTo = requestUrl.searchParams.get("redirect_to")?.toString();
+  const cookieStore = await cookies();
 
-  const cookies = request.headers.get('cookie');
-  const supabaseAccessToken = cookies?.split('; ').find(row => row.startsWith('supabaseAccessToken='))?.split('=')[1];
-  console.log('supabaseAccessToken', supabaseAccessToken);
+  // Check for supabaseAccessToken
+  const supabaseAccessToken = cookieStore.get("supabaseAccessToken")?.value;
 
-  if (!code && supabaseAccessToken) {
-    const decoded = jwt.decode(supabaseAccessToken);
-    if (decoded && typeof decoded !== 'string') {
-      const { email, sub } = decoded;
+  // If there's a supabaseAccessToken, verify it and create the user if necessary
+  if (supabaseAccessToken) {
+    const signingSecret = process.env.SUPABASE_JWT_SECRET ?? "";
+    try {
+      const verifiedToken = jwt.verify(
+        supabaseAccessToken,
+        signingSecret
+      ) as JwtPayload;
+      if (!verifiedToken.sub) {
+          throw new Error('Token invalid')
+      }
+      // If token is verified, create or get the user in public.users
       await createUserIfNotExists({
-        providerId: sub as string,
-        email: email,
+        providerId: verifiedToken.sub,
+        email: verifiedToken.email as string,
       });
+      return NextResponse.redirect(
+        redirectTo ? `${origin}${redirectTo}` : `${origin}/dashboard`
+      );
+    } catch (jwtError) {
+      console.error("Error verifying supabaseAccessToken:", jwtError);
     }
   }
-
+ // If there is no supabaseAccessToken but there is a code
   if (code) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
     const {
       data: { user },
-    } = await supabase.auth.getUser();
+      error,
+    } = await supabase.auth.exchangeCodeForSession(code);
 
-    if (user) {
-      await createUserIfNotExists({
-        providerId: user.id,
-        email: user.email,
-      });
+    if (error || !user) {
+      console.error("Error exchange code for session:", error);
+      return NextResponse.redirect(
+        redirectTo ? `${origin}${redirectTo}` : `${origin}`
+      );
     }
+
+    await createUserIfNotExists({
+      providerId: user.id,
+      email: user.email,
+    });
   }
 
   // Redirect user to the correct location
