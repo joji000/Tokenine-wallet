@@ -12,6 +12,10 @@ import {
   UnauthorizedException,
 } from "../errors/http-exceptions.error";
 import { handleError } from "../utils/handle-error.util";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
+import jwt from "jsonwebtoken";
 
 type RouteHandler = (req: NextRequest) => Promise<NextResponse>;
 
@@ -29,23 +33,36 @@ export const withAuth =
       const authHeader = getAuthHeader(req.headers);
       const token = extractBearerToken(authHeader);
 
-      if (!token) {
-        throw new UnauthorizedException(ERROR_MESSAGES[ErrorCode.NO_TOKEN]);
+      let user = null;
+      let accessToken = token;
+
+      if (token) {
+        // Verify the token and get user from Supabase
+        const {
+          data: { user: supabaseUser },
+          error: supabaseError,
+        } = await supabase.auth.getUser(token);
+
+        if (!supabaseError && supabaseUser) {
+          user = await getUserByProviderId(supabaseUser.id);
+        }
       }
 
-      // Verify the token and get user
-      const {
-        data: { user: supabaseUser },
-        error,
-      } = await supabase.auth.getUser(token);
+      // If Supabase authentication fails, try NextAuth
+      if (!user) {
+        console.log("Supabase authentication failed, trying NextAuth");
+        const session = await getServerSession(authOptions);
+        console.log("Session:", session);
+        if (session && session.supabaseAccessToken) {
+          const decoded = jwt.decode(session.supabaseAccessToken) as {
+            sub: string;
+          };
+          user = await getUserByProviderId(decoded.sub);
 
-      if (error || !supabaseUser) {
-        throw new UnauthorizedException(
-          ERROR_MESSAGES[ErrorCode.INVALID_TOKEN]
-        );
+          // Use the supabaseAccessToken from the session if available 
+          accessToken = session.supabaseAccessToken;
+        }
       }
-
-      const user = await getUserByProviderId(supabaseUser.id);
 
       if (!user) {
         throw new UnauthorizedException(
@@ -70,7 +87,10 @@ export const withAuth =
 
       // Add user and token to the request context
       req.user = user;
-      req.accessToken = token;
+      req.accessToken = accessToken ?? undefined;
+      console.log("User:", req.user);
+      console.log("Token:", req.accessToken);
+
 
       // Call the original handler
       return handler(req);

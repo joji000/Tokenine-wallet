@@ -49,7 +49,7 @@ export const authOptions = {
           return session
         },
         async redirect({ baseUrl }: { url: string, baseUrl: string }) {
-          return baseUrl
+          return baseUrl+"/dashboard"
         },
     }
 };

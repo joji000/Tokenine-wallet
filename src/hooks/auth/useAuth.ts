@@ -1,6 +1,7 @@
 import type { User } from '@supabase/supabase-js'
 import { useEffect, useState } from 'react'
-
+import { getSession } from 'next-auth/react'
+import jwt from 'jsonwebtoken'
 import { createClient } from '@/utils/supabase/client.util'
 
 const useAuth = () => {
@@ -10,8 +11,20 @@ const useAuth = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data } = await supabase.auth.getUser()
-      setUser(data.user)
+      const { data, error } = await supabase.auth.getUser()
+
+      if (error || !data.user) {
+        // If Supabase authentication fails, try NextAuth
+        const session = await getSession()
+        if (session && session.supabaseAccessToken) {
+          const decoded = jwt.decode(session.supabaseAccessToken)
+          // Use the user from the NextAuth session
+          setUser(decoded as User)
+        }
+      } else {
+        setUser(data.user)
+      }
+
       setIsLoading(false)
     }
 
