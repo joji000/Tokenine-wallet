@@ -4,6 +4,7 @@ import { SupabaseAdapter } from '@auth/supabase-adapter';
 import { Adapter } from 'next-auth/adapters';
 import jwt from "jsonwebtoken";
 import { Account, Profile, Session, User } from "next-auth";
+import { createUserIfNotExists } from "@/server/services/user.service";
 
 export const authOptions = {
     providers: [
@@ -36,10 +37,19 @@ export const authOptions = {
             }
             session.supabaseAccessToken = jwt.sign(payload, signingSecret)
           }
+
+          try{
+            await createUserIfNotExists({
+              providerId: user.id,
+              email: user.email as string,
+            });
+          } catch (error) {
+            console.error('Error creating', error);
+          }
           return session
         },
         async redirect({ baseUrl }: { url: string, baseUrl: string }) {
-          return baseUrl+"/auth/callback"
+          return baseUrl
         },
     }
 };
