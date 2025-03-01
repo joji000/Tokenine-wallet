@@ -26,6 +26,8 @@ jobs:
             | # Moved your script to SCRIPT_AFTER for better structure and clarity
             cd ~/deployWallet
             npx prisma generate
+            rm .env
+            touch .env
             echo "NODE_ENV=production" >> .env
             echo "NEXT_PUBLIC_API_ENDPOINT=${{ secrets.NEXT_PUBLIC_API_ENDPOINT }}" >> .env
             echo "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL }}" >> .env
