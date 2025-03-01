@@ -13,7 +13,7 @@ import {
 } from "../errors/http-exceptions.error";
 import { handleError } from "../utils/handle-error.util";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/app/api/auth/authOptions";
 
 import jwt from "jsonwebtoken";
 
@@ -59,7 +59,7 @@ export const withAuth =
           };
           user = await getUserByProviderId(decoded.sub);
 
-          // Use the supabaseAccessToken from the session if available 
+          // Use the supabaseAccessToken from the session if available
           accessToken = session.supabaseAccessToken;
         }
       }
@@ -90,7 +90,6 @@ export const withAuth =
       req.accessToken = accessToken ?? undefined;
       console.log("User:", req.user);
       console.log("Token:", req.accessToken);
-
 
       // Call the original handler
       return handler(req);
