@@ -5,11 +5,26 @@ import { useRouter } from 'next/navigation';
 import CustomLoginButton from '@/components/CustomLoginButton';
 import { createClient } from '@/utils/supabase/client.util';
 import { Route } from '@/enums/route.enum';
+import { signIn ,useSession} from 'next-auth/react'
 
 const Home = () => {
   const supabase = createClient();
   const router = useRouter();
+  const { data: sessionData } = useSession();
+  
 
+  //line-login
+  const handleLineLogin = () => {
+    signIn('line');
+  };
+
+  useEffect(() => {
+      if (sessionData) {
+        router.push(Route.DASHBOARD);
+      }
+  }, [sessionData, router]);
+
+  //supabase-login
   useEffect(() => {
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
@@ -94,15 +109,23 @@ const Home = () => {
           <Typography variant="h5" gutterBottom color="black">
             Sign in to your Account
           </Typography>
+
           <CustomLoginButton
             logo="/icon/google-logo.svg"
             text="Continue with Google"
             onClick={() => handleSignIn('google')}
           />
-          <CustomLoginButton
+
+          {/* <CustomLoginButton
             logo="/icon/apple-logo.svg"
             text="Continue with Apple"
             onClick={() => handleSignIn('apple')}
+          /> */}
+
+          <CustomLoginButton
+            logo='/icon/LINE-icon.png'
+            text='Continue with Line'
+            onClick={handleLineLogin}
           />
         </Box>
       </Stack>

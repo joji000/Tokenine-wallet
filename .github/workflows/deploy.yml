@@ -38,4 +38,12 @@ jobs:
             echo "ENGINE_X_BACKEND_WALLET_ADDRESS=${{ secrets.ENGINE_X_BACKEND_WALLET_ADDRESS }}" >> .env
             echo "ENGINE_AUTHORIZATION_TOKEN=${{ secrets.ENGINE_AUTHORIZATION_TOKEN }}" >> .env
             echo "ENGINE_CHAIN_ID=${{ secrets.ENGINE_CHAIN_ID }}" >> .env
+            echo "LINE_CLIENT_ID=${{ secrets.LINE_CLIENT_ID }}" >> .env
+            echo "LINE_CLIENT_SECRET=${{ secrets.LINE_CLIENT_SECRET }}" >> .env
+            echo "SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" >> .env
+            echo "SUPABASE_JWT_SECRET=${{ secrets.SUPABASE_JWT_SECRET }}" >> .env
+            echo "NEXTAUTH_URL=${{ secrets.NEXTAUTH_URL }}" >> .env
+            echo "AUTH_SECRET=${{ secrets.AUTH_SECRET }}" >> .env
+
+
             docker compose up -d --build
