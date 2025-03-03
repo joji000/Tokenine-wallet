@@ -88,8 +88,6 @@ export const withAuth =
       // Add user and token to the request context
       req.user = user;
       req.accessToken = accessToken ?? undefined;
-      console.log("User:", req.user);
-      console.log("Token:", req.accessToken);
 
       // Call the original handler
       return handler(req);

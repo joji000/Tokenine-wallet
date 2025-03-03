@@ -78,7 +78,7 @@ const TheMainLayout = ({ children }: TheMainLayoutProps) => {
     <div>
       <DrawerHeader>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Image src="/icon/tokenine-logo-h.svg" alt="TokenNine Logo" width={180} height={50} />
+          <Image src="https://exp.pointledger.net/assets/configs/network_logo.svg" alt="Point Ledger Logo" width={180} height={50} />
         </Box>
         <IconButton onClick={handleDrawerClose}>
           {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}

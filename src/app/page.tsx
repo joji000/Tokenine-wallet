@@ -102,8 +102,8 @@ const Home = () => {
         >
           <Box
             component="img"
-            src="/icon/tokenine-logo.svg"
-            alt="TokenNine Logo"
+            src="https://exp.pointledger.net/assets/configs/network_logo.svg"
+            alt="Point Ledger Logo"
             sx={{ width: { xs: '40vw', md: '20vw' }, mb: 2 }}
           />
           <Typography variant="h5" gutterBottom color="black">
